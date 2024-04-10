@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, TextInput, ScrollView, StyleSheet, Alert, Image, TouchableOpacity } from 'react-native';
+import { Text, View, Button, TextInput, ScrollView, StyleSheet, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import * as ImagePicker from 'expo-image-picker';
-import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome5 } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons';
-import { db, storage } from "../DB/firebase";
+import { db } from "../DB/firebase";
 import { collection, getDocs,setDoc, doc } from "firebase/firestore";
 import { Camera } from 'expo-camera';
 
@@ -17,8 +14,7 @@ const CrearLista = () => {
         nombreProducto: '',
         categoria: '',
         precio: '',
-        precioOferta: '',
-        imagen: null,
+        precioOferta: ''
     });
     const [message, setMessage] = useState(null);
     const [categorias, setCategorias] = useState([]);
@@ -45,16 +41,12 @@ const CrearLista = () => {
                 return;
             }
 
-            const imageUrl = await uploadImage();
-            const precio = parseFloat(state.precio);
-            const precioOferta = state.precioOferta ? parseFloat(state.precioOferta) : null;
             const producto = {
                 idProducto: state.idProducto, 
                 nombreProducto: state.nombreProducto,
                 categoria: state.categoria,
-                precio: precio,
-                precioOferta: precioOferta,
-                imagen: imageUrl,
+                precio: parseFloat(state.precio),
+                precioOferta: state.precioOferta ? parseFloat(state.precioOferta) : null,
             };
 
             await setDoc(doc(db, 'productos', state.idProducto), producto);
@@ -65,8 +57,7 @@ const CrearLista = () => {
                 nombreProducto: '',
                 categoria: '',
                 precio: '',
-                precioOferta: '',
-                imagen: null,
+                precioOferta: ''
             });
 
         } catch (error) {
@@ -76,19 +67,6 @@ const CrearLista = () => {
     };
 
     useEffect(() => {
-        const requestMediaLibraryPermissions = async () => {
-            try {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (status !== 'granted') {
-                    Alert.alert('Permisos requeridos', 'Se requieren permisos para acceder a la galería.');
-                }
-            } catch (error) {
-                console.error('Error al solicitar permisos:', error);
-            }
-        };
-
-        requestMediaLibraryPermissions();
-
         obtenerCategorias();
     }, []);
 
@@ -201,35 +179,35 @@ const CrearLista = () => {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      padding: 16,
+    flex: 1,
+    padding: 16,
     },
     inputContainer: {
-      marginBottom: 16,
+    marginBottom: 16,
     },
     input: {
-      height: 30,
-      borderBottomWidth: 1,
-      borderColor: 'gray',
-      paddingLeft: 8,
-      textAlignVertical: 'bottom',
+    height: 30,
+    borderBottomWidth: 1,
+    borderColor: 'gray',
+    paddingLeft: 8,
+    textAlignVertical: 'bottom',
     },
     buttonContainer: {
-      marginTop: 16,
+    marginTop: 16,
     },
     cameraContainer: {
-      aspectRatio: 4/3, 
-      overflow: 'hidden',
-      borderRadius: 10, 
+    aspectRatio: 4/3, 
+    overflow: 'hidden',
+    borderRadius: 10, 
     },
     camera: {
-      flex: 1,
+    flex: 1,
     },
     message: {
-      color: 'green',
-      textAlign: 'center',
-      marginTop: 16,
+    color: 'green',
+    textAlign: 'center',
+    marginTop: 16,
     },
-  });
-  
+});
+
 export default CrearLista;
