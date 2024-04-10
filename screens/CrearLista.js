@@ -8,6 +8,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { db, storage } from "../DB/firebase";
 import { collection, getDocs,setDoc, doc } from "firebase/firestore";
+import { Camera } from 'expo-camera';
 
 const CrearLista = () => {
     const navigation = useNavigation();
@@ -21,6 +22,7 @@ const CrearLista = () => {
     });
     const [message, setMessage] = useState(null);
     const [categorias, setCategorias] = useState([]);
+    const [scanning, setScanning] = useState(false);
 
     React.useLayoutEffect(() => {
         navigation.setOptions({ 
@@ -35,6 +37,43 @@ const CrearLista = () => {
             ),
         });
     }, [navigation]);
+
+    const GuardarProducto = async () => {
+        try {
+            if (!state.idProducto || !state.nombreProducto || !state.categoria || !state.precio) {
+                Alert.alert('Campos obligatorios', 'Por favor, complete todos los campos obligatorios.');
+                return;
+            }
+
+            const imageUrl = await uploadImage();
+            const precio = parseFloat(state.precio);
+            const precioOferta = state.precioOferta ? parseFloat(state.precioOferta) : null;
+            const producto = {
+                idProducto: state.idProducto, 
+                nombreProducto: state.nombreProducto,
+                categoria: state.categoria,
+                precio: precio,
+                precioOferta: precioOferta,
+                imagen: imageUrl,
+            };
+
+            await setDoc(doc(db, 'productos', state.idProducto), producto);
+            setMessage('Producto guardado exitosamente');
+
+            setState({
+                idProducto: '', 
+                nombreProducto: '',
+                categoria: '',
+                precio: '',
+                precioOferta: '',
+                imagen: null,
+            });
+
+        } catch (error) {
+            console.error('Error al guardar el producto:', error);
+            Alert.alert('Error', 'Hubo un error al intentar guardar el producto');
+        }
+    };
 
     useEffect(() => {
         const requestMediaLibraryPermissions = async () => {
@@ -69,86 +108,47 @@ const CrearLista = () => {
         setMessage(null);
     };
 
-    const pickImage = async () => {
-        try {
-            const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.All,
-                allowsEditing: true,
-                aspect: [200, 200],
-                quality: 1,
-            });
-
-            if (!result.cancelled && result.assets.length > 0) {
-                setState(prevState => ({ ...prevState, imagen: result.assets[0].uri }));
-            }
-        } catch (error) {
-            console.error('Error al seleccionar la imagen:', error);
-            Alert.alert('Error', 'Hubo un error al seleccionar la imagen.');
-        }
+    const handleCodigoBarrasScanned = (codigoBarras) => {
+        setState(prevState => ({ ...prevState, idProducto: codigoBarras }));
     };
 
-    const uploadImage = async () => {
-        if (state.imagen) {
-            const storageRef = ref(storage, `imagenes/${Date.now()}.jpg`);
-            await uploadString(storageRef, state.imagen, 'data_url');
-            const downloadURL = await getDownloadURL(storageRef);
-            return downloadURL;
-        }
-        return null;
+    const startScanning = () => {
+        setScanning(true);
     };
 
-    const eliminarImagen = () => {
-        setState(prevState => ({ ...prevState, imagen: null }));
+    const handleBarCodeScanned = ({ data }) => {
+        handleCodigoBarrasScanned(data);
     };
 
-    const GuardarProducto = async () => {
-        try {
-            if (!state.idProducto || !state.nombreProducto || !state.categoria || !state.precio) {
-                Alert.alert('Campos obligatorios', 'Por favor, complete todos los campos obligatorios.');
-                return;
-            }
-    
-            const imageUrl = await uploadImage();
-            const precio = parseFloat(state.precio);
-            const precioOferta = state.precioOferta ? parseFloat(state.precioOferta) : null;
-            const producto = {
-                idProducto: state.idProducto, 
-                nombreProducto: state.nombreProducto,
-                categoria: state.categoria,
-                precio: precio,
-                precioOferta: precioOferta,
-                imagen: imageUrl,
-            };
-    
-            await setDoc(doc(db, 'productos', state.idProducto), producto);
-            setMessage('Producto guardado exitosamente');
-
-            setState({
-                idProducto: '', 
-                nombreProducto: '',
-                categoria: '',
-                precio: '',
-                precioOferta: '',
-                imagen: null,
-            });
-    
-        } catch (error) {
-            console.error('Error al guardar el producto:', error);
-            Alert.alert('Error', 'Hubo un error al intentar guardar el producto');
-        }
-    };
+    if (scanning) {
+        return (
+            <ScrollView style={styles.container}>
+                <View style={styles.inputContainer}>
+                    <Text>ID</Text>
+                    <Text>ID: {state.idProducto}</Text>
+                </View>
+                <View style={styles.inputContainer}>
+                    <Button title="Detener escaneo" onPress={() => setScanning(false)} />
+                </View>
+                <View style={styles.cameraContainer}>
+                    <Camera
+                        style={styles.camera}
+                        type={Camera.Constants.Type.back}
+                        onBarCodeScanned={handleBarCodeScanned}
+                    />
+                </View>
+            </ScrollView>
+        );
+    }
 
     return (
         <ScrollView style={styles.container}>
             <View style={styles.inputContainer}>
                 <Text>ID</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="ID"
-                    keyboardType="numeric"
-                    value={state.idProducto}  
-                    onChangeText={(value) => handleChangeText('idProducto', value)}
-                />
+                <Text>ID: {state.idProducto}</Text>
+            </View>
+            <View style={styles.inputContainer}>
+                <Button title="Escanear código de barras" onPress={startScanning} />
             </View>
             <View style={styles.inputContainer}>
                 <Text>Ingrese el nombre del producto</Text>
@@ -191,25 +191,9 @@ const CrearLista = () => {
                     onChangeText={(value) => handleChangeText('precioOferta', value)}
                 />
             </View>
-
-            <View style={styles.imageContainer}>
-                {state.imagen && <Image source={{ uri: state.imagen }} style={styles.image} />}
-                <View style={styles.imageButtonsContainer}>
-                    <TouchableOpacity onPress={pickImage}>
-                        <FontAwesome5 name="file-image" size={24} color="black" solid/>
-                    </TouchableOpacity>
-                    {state.imagen && (
-                        <TouchableOpacity onPress={eliminarImagen}>
-                            <FontAwesome5 name="trash" size={24} color="red" solid/>
-                        </TouchableOpacity>
-                    )}
-                </View>
-            </View>
-
             <View style={styles.buttonContainer}>
                 <Button title="Guardar producto" onPress={GuardarProducto} />
             </View>
-
             {message && <Text style={styles.message}>{message}</Text>}
         </ScrollView>
     );
@@ -217,39 +201,35 @@ const CrearLista = () => {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 16,
+      flex: 1,
+      padding: 16,
     },
     inputContainer: {
-        marginBottom: 16,
+      marginBottom: 16,
     },
     input: {
-        height: 30,
-        borderBottomWidth: 1,
-        borderColor: 'gray',
-        paddingLeft: 8,
-        textAlignVertical: 'bottom',
+      height: 30,
+      borderBottomWidth: 1,
+      borderColor: 'gray',
+      paddingLeft: 8,
+      textAlignVertical: 'bottom',
     },
     buttonContainer: {
-        marginTop: 16,
+      marginTop: 16,
     },
-    imageContainer: {
-        alignItems: 'center',
-        marginBottom: 16,
+    cameraContainer: {
+      aspectRatio: 4/3, 
+      overflow: 'hidden',
+      borderRadius: 10, 
     },
-    image: {
-        width: 200,
-        height: 200,
-        marginBottom: 8,
-    },
-    imageButtonsContainer: {
-        flexDirection: 'row', 
-        marginTop: 8,
+    camera: {
+      flex: 1,
     },
     message: {
-        color: 'green',
-        textAlign: 'center',
-        marginTop: 16,
+      color: 'green',
+      textAlign: 'center',
+      marginTop: 16,
     },
-});
-
+  });
+  
 export default CrearLista;
