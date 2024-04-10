@@ -7,13 +7,13 @@ import { StatusBar } from 'react-native';
 
 import Lista from '../screens/Lista';
 import ActualizarLista from '../screens/ActualizarLista';
-import Carrito from '../screens/Carrito';
 import CrearCategoria from '../screens/CrearCategoria';
 import Login from '../screens/Login';
 import ForgotPassword from '../screens/RecuperarContrasena'; 
 import EscanerCodigoBarras from '../screens/CodigoBarras';
 import CrearLista from '../screens/CrearLista';
 import Historial from '../screens/Historial';
+import CarritoCompra from '../screens/Carrito';
 
 import Loading from './Loading';
 
@@ -69,6 +69,7 @@ export default function Navigation () {
           <Stack.Screen name="Crear Categoria" component={CrearCategoria} />
           <Stack.Screen name="Actualizar Lista" component={ActualizarLista} />
           <Stack.Screen name="Historial" component={Historial} />
+          <Stack.Screen name="Carrito Compra" component={CarritoCompra} />
         </Stack.Navigator>
       </>
     )
@@ -106,16 +107,6 @@ export default function Navigation () {
             ),
           }}
         />
-        {/* <Tab.Screen 
-          name="Carrito Compra" 
-          component={Carrito}
-          options={{
-            tabBarLabel: 'Carrito Compra',
-            tabBarIcon: ({ color, size }) => (
-              <AntDesign name="shoppingcart" size={size} color={color} />
-            ),
-          }}
-        /> */}
         <Tab.Screen 
           name="Codigo de Barras" 
           component={EscanerCodigoBarras}

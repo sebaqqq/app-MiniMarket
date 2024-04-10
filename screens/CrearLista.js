@@ -120,7 +120,6 @@ const CrearLista = () => {
                 imagen: imageUrl,
             };
     
-            // await addDoc(collection(db, 'productos'), producto);
             await setDoc(doc(db, 'productos', state.idProducto), producto);
             setMessage('Producto guardado exitosamente');
 
