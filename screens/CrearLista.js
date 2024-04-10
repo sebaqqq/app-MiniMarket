@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons';
 import { db, storage } from "../DB/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs,setDoc, doc } from "firebase/firestore";
 
 const CrearLista = () => {
     const navigation = useNavigation();
