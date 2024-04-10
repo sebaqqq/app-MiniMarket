@@ -131,19 +131,16 @@ const Lista = ({ route }) => {
   const handleAgregarAlCarrito = (producto) => {
     try {
       setCarrito((prevCarrito) => [...prevCarrito, { ...producto, cantidad: 1 }]);
-  
-      // Mostrar un mensaje de éxito
       console.log("Producto añadido al carrito:", producto);
       Alert.alert("Agregado al carrito", `${producto.nombreProducto} ha sido añadido al carrito`);
     } catch (error) {
       console.error("Error al agregar producto al carrito:", error);
-      // Puedes mostrar una alerta de error específica si es necesario
       Alert.alert("Error", "Hubo un error al agregar el producto al carrito. Por favor, inténtalo de nuevo.");
     }
   };
   
   const handleNavegarACarrito = () => {
-    navigation.navigate("CarritoCompra", { carrito, setCarrito }); // Pass setCarrito as a prop
+    navigation.navigate("CarritoCompra", { carrito, setCarrito });
   };
 
   const handleActualizarCantidad = (productId, newQuantity) => {

@@ -69,7 +69,7 @@ export default function Navigation () {
           <Stack.Screen name="Crear Categoria" component={CrearCategoria} />
           <Stack.Screen name="Actualizar Lista" component={ActualizarLista} />
           <Stack.Screen name="Historial" component={Historial} />
-          <Stack.Screen name="Carrito Compra" component={CarritoCompra} />
+          <Stack.Screen name="CarritoCompra" component={CarritoCompra} />
         </Stack.Navigator>
       </>
     )

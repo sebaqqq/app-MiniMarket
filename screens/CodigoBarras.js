@@ -22,20 +22,25 @@ const EscanerCodigoBarras = () => {
     const handleBarCodeScanned = async ({ type, data }) => {
         setScanned(true);
         setCodigoBarras(data);
-
+    
         try {
             const productoDoc = doc(db, "productos", data);
             const productoSnap = await getDoc(productoDoc);
-
+    
             if (!productoSnap.exists()) {
                 console.log("Producto no encontrado");
                 Alert.alert("Producto no encontrado");
                 return;
             }
-
+    
             const productoData = productoSnap.data();
-            setProducto(productoData);
-            setCarrito([...carrito, productoData]);
+            if (productoData) {
+                setProducto(productoData);
+                setCarrito([...carrito, productoData]);
+            } else {
+                console.log("Error: el documento del producto está vacío");
+                Alert.alert("Error: el documento del producto está vacío");
+            }
         } catch (error) {
             console.error("Error al obtener el producto:", error);
             Alert.alert("Error al obtener el producto");

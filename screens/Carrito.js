@@ -7,7 +7,7 @@ const CarritoCompra = ({ carrito, removeFromCart }) => {
             <Text>Productos en el carrito:</Text>
             <FlatList
                 data={carrito}
-                keyExtractor={(item) => item.id.toString()} // Asumiendo que el id del producto es un número
+                keyExtractor={(item, index) => index.toString()} // Usar el índice como clave si no hay una propiedad id válida
                 renderItem={({ item }) => (
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
                         <Text>{item.nombreProducto}</Text>
