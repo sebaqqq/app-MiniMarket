@@ -9,6 +9,7 @@ import { Camera } from 'expo-camera';
 
 const CAMERA_PERMISSION = 'camera';
 
+
 const Lista = ({ route }) => {
   const [productos, setProductos] = useState([]);
   const [filtro, setFiltro] = useState("");
@@ -19,8 +20,7 @@ const Lista = ({ route }) => {
   const navigation = useNavigation();
   const { carrito: carritoEnLista, setCarrito: setCarritoEnLista } = route.params || {};
   const [carrito, setCarrito] = useState(carritoEnLista || []);
-  const [hasPermission, setHasPermission] = useState(null); // Nuevo estado para los permisos de la cámara
-
+  const [hasPermission, setHasPermission] = useState(null); 
 
 
   useEffect(() => {
