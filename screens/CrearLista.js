@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Button, TextInput, ScrollView, StyleSheet, Alert, Image, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons'; 
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-
+import { MaterialIcons } from '@expo/vector-icons';
 import { db, storage } from "../DB/firebase";
-import { collection, addDoc } from "firebase/firestore";
-
+import { collection, getDocs } from "firebase/firestore";
 
 const CrearLista = () => {
     const navigation = useNavigation();
@@ -20,8 +19,22 @@ const CrearLista = () => {
         precioOferta: '',
         imagen: null,
     });
-
     const [message, setMessage] = useState(null);
+    const [categorias, setCategorias] = useState([]);
+
+    React.useLayoutEffect(() => {
+        navigation.setOptions({ 
+            headerRight: () => (
+                <MaterialIcons
+                    name="category"
+                    size={26}
+                    right={20}
+                    color="#0077B6"
+                    onPress={() => navigation.navigate('Crear Categoria')}
+                />
+            ),
+        });
+    }, [navigation]);
 
     useEffect(() => {
         const requestMediaLibraryPermissions = async () => {
@@ -36,10 +49,23 @@ const CrearLista = () => {
         };
 
         requestMediaLibraryPermissions();
+
+        obtenerCategorias();
     }, []);
 
+    const obtenerCategorias = async () => {
+        try {
+            const categoriasSnapshot = await getDocs(collection(db, 'categorias'));
+            const categoriasData = categoriasSnapshot.docs.map(doc => doc.data().nombreCategoria);
+            setCategorias(categoriasData);
+        } catch (error) {
+            console.error('Error al obtener las categorías:', error);
+            Alert.alert('Error', 'Hubo un error al obtener las categorías.');
+        }
+    };
+
     const handleChangeText = (key, value) => {
-        setState({ ...state, [key]: value });
+        setState(prevState => ({ ...prevState, [key]: value }));
         setMessage(null);
     };
 
@@ -52,8 +78,8 @@ const CrearLista = () => {
                 quality: 1,
             });
 
-            if (!result.canceled) {
-                setState({ ...state, imagen: result.assets?.[0]?.uri });
+            if (!result.cancelled && result.assets.length > 0) {
+                setState(prevState => ({ ...prevState, imagen: result.assets[0].uri }));
             }
         } catch (error) {
             console.error('Error al seleccionar la imagen:', error);
@@ -72,7 +98,7 @@ const CrearLista = () => {
     };
 
     const eliminarImagen = () => {
-        setState({ ...state, imagen: null });
+        setState(prevState => ({ ...prevState, imagen: null }));
     };
 
     const GuardarProducto = async () => {
@@ -83,12 +109,10 @@ const CrearLista = () => {
             }
     
             const imageUrl = await uploadImage();
-    
             const precio = parseFloat(state.precio);
             const precioOferta = state.precioOferta ? parseFloat(state.precioOferta) : null;
-    
             const producto = {
-                idProducto: state.idProducto, // Agregar el ID único al objeto del producto
+                idProducto: state.idProducto, 
                 nombreProducto: state.nombreProducto,
                 categoria: state.categoria,
                 precio: precio,
@@ -96,12 +120,12 @@ const CrearLista = () => {
                 imagen: imageUrl,
             };
     
-            await addDoc(collection(db, 'productos'), producto);
+            // await addDoc(collection(db, 'productos'), producto);
+            await setDoc(doc(db, 'productos', state.idProducto), producto);
             setMessage('Producto guardado exitosamente');
-    
-            // Limpiar los campos después de agregar el producto
+
             setState({
-                idProducto: '', // Limpiar el ID único
+                idProducto: '', 
                 nombreProducto: '',
                 categoria: '',
                 precio: '',
@@ -115,27 +139,15 @@ const CrearLista = () => {
         }
     };
 
-    const NavegarALista = () => {
-        navigation.navigate('Lista');
-    };
-
     return (
         <ScrollView style={styles.container}>
-            <View style={styles.buttonContainer}>
-                <Button title="Ver Lista" onPress={NavegarALista} />
-            </View>
-            <View style={styles.buttonContainer}>
-                <Button title="Crear Categoría" onPress={() => navigation.navigate('categoria')} />
-            </View>
-
-
             <View style={styles.inputContainer}>
                 <Text>ID</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="ID"
                     keyboardType="numeric"
-                    value={state.idProducto}  // Agrega esta línea
+                    value={state.idProducto}  
                     onChangeText={(value) => handleChangeText('idProducto', value)}
                 />
             </View>
@@ -144,18 +156,21 @@ const CrearLista = () => {
                 <TextInput
                     style={styles.input}
                     placeholder="Nombre del producto"
-                    value={state.nombreProducto}  
+                    value={state.nombreProducto}
                     onChangeText={(value) => handleChangeText('nombreProducto', value)}
                 />
             </View>
             <View style={styles.inputContainer}>
                 <Text>Seleccione la categoría</Text>
-                <TextInput
+                <Picker
+                    selectedValue={state.categoria}
                     style={styles.input}
-                    placeholder="Categoría"
-                    value={state.categoria}  // Agrega esta línea
-                    onChangeText={(value) => handleChangeText('categoria', value)}
-                />
+                    onValueChange={(value) => handleChangeText('categoria', value)}>
+                    <Picker.Item label="Seleccione una categoría" value="" />
+                    {categorias.map((categoria, index) => (
+                        <Picker.Item key={index} label={categoria} value={categoria} />
+                    ))}
+                </Picker>
             </View>
             <View style={styles.inputContainer}>
                 <Text>Ingrese el precio</Text>
@@ -163,7 +178,7 @@ const CrearLista = () => {
                     style={styles.input}
                     placeholder="Precio/u"
                     keyboardType="numeric"
-                    value={state.precio}  // Agrega esta línea
+                    value={state.precio}
                     onChangeText={(value) => handleChangeText('precio', value)}
                 />
             </View>
@@ -173,7 +188,7 @@ const CrearLista = () => {
                     style={styles.input}
                     placeholder="Precio en oferta"
                     keyboardType="numeric"
-                    value={state.precioOferta}  // Agrega esta línea
+                    value={state.precioOferta}
                     onChangeText={(value) => handleChangeText('precioOferta', value)}
                 />
             </View>
@@ -228,7 +243,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     imageButtonsContainer: {
-        flexDirection: 'row', // Alinear los botones en una fila
+        flexDirection: 'row', 
         marginTop: 8,
     },
     message: {

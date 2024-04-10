@@ -11,11 +11,15 @@ import Carrito from '../screens/Carrito';
 import CrearCategoria from '../screens/CrearCategoria';
 import Login from '../screens/Login';
 import ForgotPassword from '../screens/RecuperarContrasena'; 
+import EscanerCodigoBarras from '../screens/CodigoBarras';
+import CrearLista from '../screens/CrearLista';
+import Historial from '../screens/Historial';
 
 import Loading from './Loading';
 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 
 export default function Navigation () {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -64,6 +68,7 @@ export default function Navigation () {
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           <Stack.Screen name="Crear Categoria" component={CrearCategoria} />
           <Stack.Screen name="Actualizar Lista" component={ActualizarLista} />
+          <Stack.Screen name="Historial" component={Historial} />
         </Stack.Navigator>
       </>
     )
@@ -92,12 +97,32 @@ export default function Navigation () {
           }}
         />
         <Tab.Screen 
-          name="Carrito" 
+          name="Añadir Producto" 
+          component={CrearLista}
+          options={{
+            tabBarLabel: 'Añadir Producto',
+            tabBarIcon: ({ color, size }) => (
+              <Entypo name="add-to-list" size={size} color={color} />
+            ),
+          }}
+        />
+        {/* <Tab.Screen 
+          name="Carrito Compra" 
           component={Carrito}
           options={{
-            tabBarLabel: 'Carrito',
+            tabBarLabel: 'Carrito Compra',
             tabBarIcon: ({ color, size }) => (
               <AntDesign name="shoppingcart" size={size} color={color} />
+            ),
+          }}
+        /> */}
+        <Tab.Screen 
+          name="Codigo de Barras" 
+          component={EscanerCodigoBarras}
+          options={{
+            tabBarLabel: 'Codigo de Barras',
+            tabBarIcon: ({ color, size }) => (
+              <AntDesign name="barcode" size={size} color={color} />
             ),
           }}
         />

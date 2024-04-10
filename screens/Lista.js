@@ -223,9 +223,6 @@ const Lista = ({ route }) => {
     <View style={styles.container}>
 
       <View style={styles.botonesContainerInicio}>
-        <TouchableOpacity style={styles.boton} onPress={() => {navigation.navigate("Añadir Producto");}}>
-          <Text style={styles.textoBoton}>Añadir Producto</Text>
-        </TouchableOpacity>
 
         <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate("Historial")}>
           <Text style={styles.textoBoton}>Ver Historial</Text>
@@ -235,22 +232,6 @@ const Lista = ({ route }) => {
           <Icon name="shopping-cart" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
-
-
-
-
-      <TouchableOpacity style={styles.botonEscanear} onPress={handleEscanearCodigoBarras}>
-        <Text style={styles.textoBoton}>Escanear Código de Barras</Text>
-      </TouchableOpacity>
-
-      {scanning && hasPermission && (
-        <View style={styles.scannerContainer}>
-          <BarCodeScanner
-            onBarCodeScanned={handleBarCodeScanned}
-            style={StyleSheet.absoluteFillObject}
-          />
-        </View>
-      )}
 
       <View style={styles.filtrosContainer}>
         <View style={styles.filtroIcono}>
