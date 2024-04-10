@@ -9,6 +9,7 @@ import { Camera } from 'expo-camera';
 
 const CAMERA_PERMISSION = 'camera';
 
+
 const Lista = ({ route }) => {
   const [productos, setProductos] = useState([]);
   const [filtro, setFiltro] = useState("");
@@ -19,8 +20,7 @@ const Lista = ({ route }) => {
   const navigation = useNavigation();
   const { carrito: carritoEnLista, setCarrito: setCarritoEnLista } = route.params || {};
   const [carrito, setCarrito] = useState(carritoEnLista || []);
-  const [hasPermission, setHasPermission] = useState(null); // Nuevo estado para los permisos de la cámara
-
+  const [hasPermission, setHasPermission] = useState(null); 
 
 
   useEffect(() => {
@@ -130,7 +130,6 @@ const Lista = ({ route }) => {
 
   const handleAgregarAlCarrito = (producto) => {
     try {
-      // Actualizar el estado local del carrito
       setCarrito((prevCarrito) => [...prevCarrito, { ...producto, cantidad: 1 }]);
   
       // Mostrar un mensaje de éxito
@@ -144,7 +143,7 @@ const Lista = ({ route }) => {
   };
   
   const handleNavegarACarrito = () => {
-    navigation.navigate("carrito", { carrito, setCarrito }); // Pass setCarrito as a prop
+    navigation.navigate("CarritoCompra", { carrito, setCarrito }); // Pass setCarrito as a prop
   };
 
   const handleActualizarCantidad = (productId, newQuantity) => {
@@ -161,7 +160,6 @@ const Lista = ({ route }) => {
 
     setTotalCompra(newTotalCompra);
 
-    // Actualiza las opciones de navegación con el nuevo carrito
     navigation.setOptions({
       params: { carrito: updatedCarrito, setCarrito: setCarritoEnLista },
     });
