@@ -81,10 +81,6 @@ const Lista = () => {
     }
   };
 
-  const handleActualizarProducto = (producto) => {
-    navigation.navigate('ActualizarLista');
-  };
-
   const handlePresionarProducto = (id) => {
     setProductoExpandido((prevProductoExpandido) => 
       prevProductoExpandido === id ? null : id
