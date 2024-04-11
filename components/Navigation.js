@@ -15,6 +15,8 @@ import CrearLista from '../screens/CrearLista';
 import Historial from '../screens/Historial';
 import CarritoCompra from '../screens/Carrito';
 import CreateAccount from '../screens/CrearCuenta';
+import Perfil from '../screens/Cuenta';
+import EditarUser from '../screens/EditarUser';
 
 import Loading from './Loading';
 
@@ -22,6 +24,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 
 export default function Navigation () {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -72,6 +75,7 @@ export default function Navigation () {
           <Stack.Screen name="ActualizarLista" component={ActualizarLista} />
           <Stack.Screen name="CarritoCompra" component={CarritoCompra} />
           <Stack.Screen name="CreateAccount" component={CreateAccount} />
+          <Stack.Screen name="Editar Usuario" component={EditarUser} />
         </Stack.Navigator>
       </>
     )
@@ -126,6 +130,16 @@ export default function Navigation () {
             tabBarLabel: 'Historial',
             tabBarIcon: ({ color, size }) => (
               <Fontisto name="history" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen 
+          name="Perfil" 
+          component={Perfil}
+          options={{
+            tabBarLabel: 'Perfil',
+            tabBarIcon: ({ color, size }) => (
+              <Feather name="user" size={size} color={color} />
             ),
           }}
         />
