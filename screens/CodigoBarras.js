@@ -3,6 +3,7 @@ import { Text, View, Button, StyleSheet, Alert, ScrollView, Dimensions } from 'r
 import { Camera } from 'expo-camera';
 import { db } from "../DB/firebase";
 import { getDoc, doc } from "firebase/firestore";
+import { MaterialCommunityIcons } from '@expo/vector-icons'; // Importa el icono de Material Community Icons
 
 const EscanerCodigoBarras = () => {
     const [hasPermission, setHasPermission] = useState(null);
@@ -54,18 +55,19 @@ const EscanerCodigoBarras = () => {
     };
 
     const removeFromCart = (productId) => {
-        setCarrito(carrito.filter(item => item.id !== productId));
+        setCarrito(carrito.filter(item => item.idProducto !== productId));
     };
 
     const actualizarCantidad = (productId, nuevaCantidad) => {
         const nuevoCarrito = carrito.map(item => {
-            if (item.id === productId) {
+            if (item.idProducto === productId) {
                 return { ...item, cantidad: nuevaCantidad };
             }
             return item;
         });
         setCarrito(nuevoCarrito);
     };
+    
 
     if (hasPermission === null) {
         return <Text>Solicitando permiso de la cámara...</Text>;
@@ -86,17 +88,17 @@ const EscanerCodigoBarras = () => {
             {scanned && <Button title={'Escanear de nuevo'} onPress={() => setScanned(false)} />}
             <Text>Productos en el carrito: {carrito.length}</Text>
             <ScrollView style={styles.carritoContainer}>
-                {carrito.map((producto, index) => (
-                    <View key={index} style={styles.producto}>
+                {carrito.map((producto) => (
+                    <View key={producto.id} style={styles.producto}>
                         <Text>{producto.nombreProducto}</Text>
                         <Text>Precio: ${producto.precio.toFixed(0)}</Text>
                         <View style={styles.cantidadContainer}>
-                            <Button title={'-'} onPress={() => actualizarCantidad(producto.id, Math.max(producto.cantidad - 1, 0))} />
-                            <Text>{producto.cantidad}</Text>
-                            <Button title={'+'} onPress={() => actualizarCantidad(producto.id, producto.cantidad + 1)} />
+                            <Button title={'-'} onPress={() => actualizarCantidad(producto.idProducto, Math.max(producto.cantidad - 1, 0))} />
+                            <Text style={styles.cantidadText}>{producto.cantidad}</Text>
+                            <Button title={'+'} onPress={() => actualizarCantidad(producto.idProducto, producto.cantidad + 1)} />
                         </View>
                         {producto.cantidad === 0 && (
-                            <Button title={'Eliminar'} onPress={() => removeFromCart(producto.id)} />
+                            <MaterialCommunityIcons name="delete-outline" size={24} color="white" style={styles.iconoEliminar} onPress={() => removeFromCart(producto.idProducto)} />
                         )}
                     </View>
                 ))}
@@ -114,15 +116,15 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     cameraContainer: {
-        flex: 2,
-        aspectRatio: 2,
+        flex: 1,
+        aspectRatio: 1,
         height: Dimensions.get('window').height * 0.5,
     },
     camera: {
         flex: 1,
     },
     carritoContainer: {
-        maxHeight: 300,
+        maxHeight: 200,
         marginVertical: 10,
     },
     producto: {
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 8,
-        paddingHorizontal: 15,
+        paddingHorizontal: 16,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
     },
@@ -138,15 +140,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
+    cantidadText: {
+        paddingHorizontal: 16,
+    },
     totalContainer: {
         alignItems: 'flex-end',
-        paddingHorizontal: 30,
+        paddingHorizontal: 16,
         paddingVertical: 8,
     },
     totalText: {
         fontWeight: 'bold',
         fontSize: 16,
     },
+    iconoEliminar: {
+        backgroundColor: 'red',
+        padding: 10,
+        borderRadius: 20,
+    },
 });
 
-export default EscanerCodigoBarras;
+export default EscanerCodigoBarras
