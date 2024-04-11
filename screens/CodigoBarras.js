@@ -88,24 +88,29 @@ const EscanerCodigoBarras = () => {
             {scanned && <Button title={'Escanear de nuevo'} onPress={() => setScanned(false)} />}
             <Text>Productos en el carrito: {carrito.length}</Text>
             <ScrollView style={styles.carritoContainer}>
-                {carrito.map((producto) => (
-                    <View key={producto.id} style={styles.producto}>
-                        <Text>{producto.nombreProducto}</Text>
-                        <Text>Precio: ${producto.precio.toFixed(0)}</Text>
-                        <View style={styles.cantidadContainer}>
-                            <Button title={'-'} onPress={() => actualizarCantidad(producto.idProducto, Math.max(producto.cantidad - 1, 0))} />
-                            <Text style={styles.cantidadText}>{producto.cantidad}</Text>
-                            <Button title={'+'} onPress={() => actualizarCantidad(producto.idProducto, producto.cantidad + 1)} />
-                        </View>
-                        {producto.cantidad === 0 && (
-                            <MaterialCommunityIcons name="delete-outline" size={24} color="white" style={styles.iconoEliminar} onPress={() => removeFromCart(producto.idProducto)} />
-                        )}
-                    </View>
-                ))}
-                <View style={styles.totalContainer}>
-                    <Text style={styles.totalText}>Total: ${totalCompra}</Text>
-                </View>
+            {carrito.map((producto) => (
+    <View key={producto.id} style={styles.producto}>
+        <View style={styles.nombrePrecioContainer}>
+            <Text numberOfLines={2} ellipsizeMode="tail">{producto.nombreProducto}</Text>
+            <Text>Precio: ${producto.precio.toFixed(0)}</Text>
+        </View>
+        <View style={styles.cantidadEliminarContainer}>
+            <View style={styles.cantidadContainer}>
+                <Button title={'-'} onPress={() => actualizarCantidad(producto.idProducto, Math.max(producto.cantidad - 1, 0))} />
+                <Text style={styles.cantidadText}>{producto.cantidad}</Text>
+                <Button title={'+'} onPress={() => actualizarCantidad(producto.idProducto, producto.cantidad + 1)} />
+            </View>
+            {producto.cantidad === 0 && (
+                <MaterialCommunityIcons name="delete-outline" size={20} color="white" style={styles.iconoEliminar} onPress={() => removeFromCart(producto.idProducto)} />
+            )}
+        </View>
+    </View>
+))}
+
             </ScrollView>
+            <View style={styles.totalContainer}>
+                <Text style={styles.totalText}>Total: ${totalCompra}</Text>
+            </View>
         </View>
     );
 };
@@ -155,8 +160,9 @@ const styles = StyleSheet.create({
     iconoEliminar: {
         backgroundColor: 'red',
         padding: 10,
-        borderRadius: 20,
+        borderRadius: 5,
+        margin:10,
     },
 });
 
-export default EscanerCodigoBarras
+export default EscanerCodigoBarras;
