@@ -10,7 +10,7 @@ const Historial = ({ navigation }) => {
     useEffect(() => {
     const fetchVentas = async () => {
         try {
-        const ventasSnapshot = await getDocs(collection(db, 'ventas'));
+        const ventasSnapshot = await getDocs(collection(db, 'historialVentas'));
         const ventasData = ventasSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setVentas(ventasData);
         } catch (error) {
