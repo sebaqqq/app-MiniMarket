@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, StyleSheet, Alert, Dimensions, ScrollView } from 'react-native';
+import { Text, View, Button, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
 import { Camera } from 'expo-camera';
 import { db } from "../DB/firebase";
 import { getDoc, doc } from "firebase/firestore";
@@ -8,6 +8,7 @@ const EscanerCodigoBarras = () => {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const [carrito, setCarrito] = useState([]);
+    const [totalCompra, setTotalCompra] = useState(0);
 
     useEffect(() => {
         (async () => {
@@ -15,6 +16,15 @@ const EscanerCodigoBarras = () => {
             setHasPermission(status === 'granted');
         })();
     }, []);
+
+    useEffect(() => {
+        calcularTotal();
+    }, [carrito]);
+
+    const calcularTotal = () => {
+        const total = carrito.reduce((acc, producto) => acc + producto.precio, 0);
+        setTotalCompra(total.toFixed(0)); // Redondea el total hacia abajo y lo convierte en un número entero
+    };
 
     const handleBarCodeScanned = async ({ type, data }) => {
         setScanned(true);
@@ -46,10 +56,6 @@ const EscanerCodigoBarras = () => {
         setCarrito(carrito.filter(item => item.id !== productId));
     };
 
-    const finalizarVenta = () => {
-        // Lógica para finalizar la venta
-    };
-
     if (hasPermission === null) {
         return <Text>Solicitando permiso de la cámara...</Text>;
     }
@@ -72,11 +78,14 @@ const EscanerCodigoBarras = () => {
                 {carrito.map((producto, index) => (
                     <View key={index} style={styles.producto}>
                         <Text>{producto.nombreProducto}</Text>
-                        <Text>Precio: ${Math.floor(producto.precio)}</Text>
-                        <Button title={'Finalizar Venta'} onPress={finalizarVenta} />
+                        <Text>Precio: ${producto.precio.toFixed(0)}</Text>
+                        <Button title={'Eliminar'} onPress={() => removeFromCart(producto.id)} />
                     </View>
                 ))}
             </ScrollView>
+            <View style={styles.totalContainer}>
+                <Text style={styles.totalText}>Total: ${totalCompra}</Text>
+            </View>
         </View>
     );
 };
@@ -88,14 +97,14 @@ const styles = StyleSheet.create({
     },
     cameraContainer: {
         flex: 1,
-        aspectRatio: 1, // Hace que el contenedor mantenga una relación de aspecto de 1:1
-        height: Dimensions.get('window').height * 0.5, // La cámara ocupará la mitad del alto de la pantalla
+        aspectRatio: 1,
+        height: Dimensions.get('window').height * 0.5,
     },
     camera: {
         flex: 1,
     },
     carritoContainer: {
-        maxHeight: 200, // Establece la altura máxima de la lista del carrito a 200 píxeles
+        maxHeight: 200,
         marginVertical: 10,
     },
     producto: {
@@ -106,6 +115,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
+    },
+    totalContainer: {
+        alignItems: 'flex-end',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+    },
+    totalText: {
+        fontWeight: 'bold',
+        fontSize: 16,
     },
 });
 
