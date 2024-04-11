@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Button, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
-import { Camera } from 'expo-camera';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 import { db } from "../DB/firebase";
-import { getDoc, doc } from "firebase/firestore";
+import { getDoc, doc, collection, addDoc  } from "firebase/firestore";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 const EscanerCodigoBarras = () => {
@@ -13,7 +13,7 @@ const EscanerCodigoBarras = () => {
 
     useEffect(() => {
         (async () => {
-            const { status } = await Camera.requestPermissionsAsync();
+            const { status } = await BarCodeScanner.requestPermissionsAsync();
             setHasPermission(status === 'granted');
         })();
     }, []);
@@ -68,6 +68,24 @@ const EscanerCodigoBarras = () => {
         setCarrito(nuevoCarrito);
     };
 
+    const finalizarCompra = async () => {
+        try {
+            await addDoc(collection(db, 'historialVentas'), {
+                carrito,
+                totalCompra,
+                fecha: new Date().toISOString(), 
+            });
+    
+            setCarrito([]);
+            setTotalCompra(0);
+    
+            Alert.alert('Compra finalizada', 'El historial de ventas ha sido actualizado correctamente.');
+        } catch (error) {
+            console.error('Error al finalizar la compra:', error);
+            Alert.alert('Error al finalizar la compra', 'Por favor, inténtalo de nuevo más tarde.');
+        }
+    };    
+
     if (hasPermission === null) {
         return <Text>Solicitando permiso de la cámara...</Text>;
     }
@@ -78,9 +96,8 @@ const EscanerCodigoBarras = () => {
     return (
         <View style={styles.container}>
             <View style={styles.cameraContainer}>
-                <Camera
-                    style={styles.camera}
-                    type={Camera.Constants.Type.back}
+                <BarCodeScanner
+                    style={StyleSheet.absoluteFillObject}
                     onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 />
             </View>
@@ -108,6 +125,7 @@ const EscanerCodigoBarras = () => {
             </ScrollView>
             <View style={styles.totalContainer}>
                 <Text style={styles.totalText}>Total: ${totalCompra}</Text>
+                <Button title={'Finalizar Compra'} onPress={finalizarCompra} />
             </View>
         </View>
     );
@@ -117,14 +135,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
+        justifyContent: 'center',
+    },
+    camera: {
+        ...StyleSheet.absoluteFillObject,
+        aspectRatio:4/3
     },
     cameraContainer: {
         flex: 1,
         aspectRatio: 1,
         height: Dimensions.get('window').height * 0.5,
-    },
-    camera: {
-        flex: 1,
+        aspectRatio:4/3,
+        
     },
     carritoContainer: {
         maxHeight: 200,
@@ -146,11 +168,6 @@ const styles = StyleSheet.create({
     cantidadText: {
         paddingHorizontal: 16,
     },
-    totalContainer: {
-        alignItems: 'flex-end',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-    },
     totalText: {
         fontWeight: 'bold',
         fontSize: 16,
@@ -160,6 +177,12 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         margin:10,
+    },
+    totalContainer: {
+        borderTopWidth: 1,
+        borderTopColor: '#ccc',
+        padding: 10,
+        alignItems: 'center',
     },
 });
 

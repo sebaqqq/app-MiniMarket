@@ -179,34 +179,34 @@ const CrearLista = () => {
 
 const styles = StyleSheet.create({
     container: {
-    flex: 1,
-    padding: 16,
+        flex: 1,
+        padding: 16,
     },
     inputContainer: {
-    marginBottom: 16,
+        marginBottom: 16,
     },
     input: {
-    height: 30,
-    borderBottomWidth: 1,
-    borderColor: 'gray',
-    paddingLeft: 8,
-    textAlignVertical: 'bottom',
+        height: 30,
+        borderBottomWidth: 1,
+        borderColor: 'gray',
+        paddingLeft: 8,
+        textAlignVertical: 'bottom',
     },
     buttonContainer: {
-    marginTop: 16,
+        marginTop: 16,
     },
     cameraContainer: {
-    aspectRatio: 4/3, 
-    overflow: 'hidden',
-    borderRadius: 10, 
+        aspectRatio: 4/3, 
+        overflow: 'hidden',
+        borderRadius: 10, 
     },
     camera: {
-    flex: 1,
+        flex: 1,
     },
     message: {
-    color: 'green',
-    textAlign: 'center',
-    marginTop: 16,
+        color: 'green',
+        textAlign: 'center',
+        marginTop: 16,
     },
 });
 
