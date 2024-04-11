@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { collection, getDocs } from 'firebase/storage';
+import React, { useEffect, useState } from "react";
+import { Text, View, Button, StyleSheet, Alert, FlatList } from 'react-native';
 import { db } from "../DB/firebase";
+import { collection, getDocs } from 'firebase/firestore';
 
-const Historial = ({ navigation }) => {
+const Historial = () => {
   const [historial, setHistorial] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,83 +11,68 @@ const Historial = ({ navigation }) => {
   useEffect(() => {
     const fetchHistorial = async () => {
       try {
-        const historialSnapshot = await getDocs(collection(db, 'historialVentas'));
-        const historialData = historialSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const historialCollection = collection(db, 'historialVenta');
+        const historialSnapshot = await getDocs(historialCollection);
+        const historialData = historialSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
         setHistorial(historialData);
         setLoading(false);
       } catch (error) {
-        console.error('Error al obtener el historial de ventas:', error);
-        setError('Error al obtener el historial de ventas');
+        console.error("Error fetching historial:", error);
+        setError(error);
         setLoading(false);
       }
     };
-
     fetchHistorial();
   }, []);
 
-  const handleVerDetalles = (productos) => {
-    navigation.navigate('DetallesProductos', { productos });
-  };
-
-  const renderizarItemVenta = ({ item }) => {
-    return (
-      <TouchableOpacity onPress={() => handleVerDetalles(item.productos)}>
-        <View style={styles.itemVenta}>
-          <Text>{`Fecha y Hora: ${item.fechaHora ? item.fechaHora.toDate().toLocaleString() : 'N/A'}`}</Text>
-          {item.productos && item.productos.length > 0 && (
-            <View>
-              <Text>Productos Vendidos:</Text>
-              <FlatList
-                data={item.productos}
-                keyExtractor={(producto) => producto.id.toString()}
-                renderItem={({ item: producto }) => (
-                  <Text>{`${producto.nombre} - ${producto.precio}`}</Text>
-                )}
-              />
-            </View>
-          )}
-          {typeof item.total === 'number' && !isNaN(item.total) && (
-            <Text>{`Total: $${item.total.toFixed(2)}`}</Text>
-          )}
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  const renderItem = ({ item }) => (
+    <View style={styles.itemContainer}>
+      <Text>ID: {item.id}</Text>
+      <Text>Fecha: {item.fecha}</Text>
+      <Text>Total Compra: {item.totalCompra}</Text>
+    </View>
+  );
 
   if (loading) {
-    return <Text>Cargando...</Text>;
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
 
   if (error) {
-    return <Text>{error}</Text>;
+    return (
+      <View style={styles.container}>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Historial de Ventas</Text>
-      <FlatList
-        data={historial}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderizarItemVenta}
-      />
-    </View>
+    <FlatList
+      data={historial}
+      renderItem={renderItem}
+      keyExtractor={item => item.id}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  titulo: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  itemVenta: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+  itemContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
     padding: 10,
+    margin: 5,
+    borderRadius: 5,
   },
 });
 
