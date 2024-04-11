@@ -1,30 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, StyleSheet, Alert, Dimensions } from 'react-native';
-import { useNavigation } from "@react-navigation/native";
+import { Text, View, Button, StyleSheet, Alert, Dimensions, ScrollView } from 'react-native';
 import { Camera } from 'expo-camera';
 import { db } from "../DB/firebase";
-import { getDoc, doc, collection, addDoc } from "firebase/firestore";
-import { Fontisto } from '@expo/vector-icons';
+import { getDoc, doc } from "firebase/firestore";
 
 const EscanerCodigoBarras = () => {
-    const navigation = useNavigation();
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const [carrito, setCarrito] = useState([]);
-
-    React.useLayoutEffect(() => {
-        navigation.setOptions({ 
-            headerRight: () => (
-                <Fontisto
-                    name="history"
-                    size={23}
-                    right={20}
-                    color="#0077B6"
-                    onPress={() => navigation.navigate('Historial')}
-                />
-            ),
-        });
-    }, [navigation]);
 
     useEffect(() => {
         (async () => {
@@ -63,26 +46,16 @@ const EscanerCodigoBarras = () => {
         setCarrito(carrito.filter(item => item.id !== productId));
     };
 
+    const finalizarVenta = () => {
+        // Lógica para finalizar la venta
+    };
+
     if (hasPermission === null) {
         return <Text>Solicitando permiso de la cámara...</Text>;
     }
     if (hasPermission === false) {
         return <Text>Permiso de la cámara no concedido</Text>;
     }
-
-    const finalizarVenta = async () => {
-        try {
-            const historialVentasRef = collection(db, 'historialVentas');
-            await Promise.all(carrito.map(async (producto) => {
-                await addDoc(historialVentasRef, producto);
-            }));
-            setCarrito([]); // Limpiar el carrito después de guardar los productos
-            Alert.alert('Venta finalizada', 'Los productos han sido guardados en el historial de ventas.');
-        } catch (error) {
-            console.error('Error al finalizar la venta:', error);
-            Alert.alert('Error', 'Ocurrió un error al finalizar la venta. Por favor, inténtalo de nuevo.');
-        }
-    };
 
     return (
         <View style={styles.container}>
@@ -95,7 +68,7 @@ const EscanerCodigoBarras = () => {
             </View>
             {scanned && <Button title={'Escanear de nuevo'} onPress={() => setScanned(false)} />}
             <Text>Productos en el carrito: {carrito.length}</Text>
-            <View>
+            <ScrollView style={styles.carritoContainer}>
                 {carrito.map((producto, index) => (
                     <View key={index} style={styles.producto}>
                         <Text>{producto.nombreProducto}</Text>
@@ -103,7 +76,7 @@ const EscanerCodigoBarras = () => {
                         <Button title={'Finalizar Venta'} onPress={finalizarVenta} />
                     </View>
                 ))}
-            </View>
+            </ScrollView>
         </View>
     );
 };
@@ -115,11 +88,15 @@ const styles = StyleSheet.create({
     },
     cameraContainer: {
         flex: 1,
-        aspectRatio: 1, 
-        height: Dimensions.get('window').height * 4, 
+        aspectRatio: 1, // Hace que el contenedor mantenga una relación de aspecto de 1:1
+        height: Dimensions.get('window').height * 0.5, // La cámara ocupará la mitad del alto de la pantalla
     },
     camera: {
         flex: 1,
+    },
+    carritoContainer: {
+        maxHeight: 200, // Establece la altura máxima de la lista del carrito a 200 píxeles
+        marginVertical: 10,
     },
     producto: {
         flexDirection: 'row',
