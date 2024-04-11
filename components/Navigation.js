@@ -14,6 +14,7 @@ import EscanerCodigoBarras from '../screens/CodigoBarras';
 import CrearLista from '../screens/CrearLista';
 import Historial from '../screens/Historial';
 import CarritoCompra from '../screens/Carrito';
+import CreateAccount from '../screens/CrearCuenta';
 
 import Loading from './Loading';
 
@@ -70,6 +71,7 @@ export default function Navigation () {
           <Stack.Screen name="ActualizarLista" component={ActualizarLista} />
           <Stack.Screen name="Historial" component={Historial} />
           <Stack.Screen name="CarritoCompra" component={CarritoCompra} />
+          <Stack.Screen name="CreateAccount" component={CreateAccount} />
         </Stack.Navigator>
       </>
     )
