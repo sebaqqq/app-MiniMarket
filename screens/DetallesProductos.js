@@ -21,7 +21,6 @@ return (
             <Text>{`Producto: ${producto.nombreProducto}`}</Text>
             <Text>{`Cantidad: ${producto.cantidad}`}</Text>
             <Text>{`Precio: $${Math.floor(producto.precio)}`}</Text>
-            {/* Agrega más detalles según tus necesidades */}
         </View>
         ))}
     </View>

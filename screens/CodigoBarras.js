@@ -22,7 +22,7 @@ const EscanerCodigoBarras = () => {
     }, [carrito]);
 
     const calcularTotal = () => {
-        const total = carrito.reduce((acc, producto) => acc + producto.precio, 0);
+        const total = carrito.reduce((acc, producto) => acc + (producto.precio * producto.cantidad), 0);
         setTotalCompra(total.toFixed(0)); // Redondea el total hacia abajo y lo convierte en un número entero
     };
 
@@ -41,7 +41,8 @@ const EscanerCodigoBarras = () => {
     
             const productoData = productoSnap.data();
             if (productoData) {
-                setCarrito([...carrito, productoData]);
+                const nuevoProducto = { ...productoData, cantidad: 1 }; // Agrega una propiedad "cantidad" al producto escaneado
+                setCarrito([...carrito, nuevoProducto]);
             } else {
                 console.log("Error: el documento del producto está vacío");
                 Alert.alert("Error: el documento del producto está vacío");
@@ -54,6 +55,16 @@ const EscanerCodigoBarras = () => {
 
     const removeFromCart = (productId) => {
         setCarrito(carrito.filter(item => item.id !== productId));
+    };
+
+    const actualizarCantidad = (productId, nuevaCantidad) => {
+        const nuevoCarrito = carrito.map(item => {
+            if (item.id === productId) {
+                return { ...item, cantidad: nuevaCantidad };
+            }
+            return item;
+        });
+        setCarrito(nuevoCarrito);
     };
 
     if (hasPermission === null) {
@@ -79,13 +90,20 @@ const EscanerCodigoBarras = () => {
                     <View key={index} style={styles.producto}>
                         <Text>{producto.nombreProducto}</Text>
                         <Text>Precio: ${producto.precio.toFixed(0)}</Text>
-                        <Button title={'Eliminar'} onPress={() => removeFromCart(producto.id)} />
+                        <View style={styles.cantidadContainer}>
+                            <Button title={'-'} onPress={() => actualizarCantidad(producto.id, Math.max(producto.cantidad - 1, 0))} />
+                            <Text>{producto.cantidad}</Text>
+                            <Button title={'+'} onPress={() => actualizarCantidad(producto.id, producto.cantidad + 1)} />
+                        </View>
+                        {producto.cantidad === 0 && (
+                            <Button title={'Eliminar'} onPress={() => removeFromCart(producto.id)} />
+                        )}
                     </View>
                 ))}
+                <View style={styles.totalContainer}>
+                    <Text style={styles.totalText}>Total: ${totalCompra}</Text>
+                </View>
             </ScrollView>
-            <View style={styles.totalContainer}>
-                <Text style={styles.totalText}>Total: ${totalCompra}</Text>
-            </View>
         </View>
     );
 };
@@ -96,15 +114,15 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
     cameraContainer: {
-        flex: 1,
-        aspectRatio: 1,
+        flex: 2,
+        aspectRatio: 2,
         height: Dimensions.get('window').height * 0.5,
     },
     camera: {
         flex: 1,
     },
     carritoContainer: {
-        maxHeight: 200,
+        maxHeight: 300,
         marginVertical: 10,
     },
     producto: {
@@ -112,13 +130,17 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 8,
-        paddingHorizontal: 16,
+        paddingHorizontal: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
     },
+    cantidadContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     totalContainer: {
         alignItems: 'flex-end',
-        paddingHorizontal: 16,
+        paddingHorizontal: 30,
         paddingVertical: 8,
     },
     totalText: {
