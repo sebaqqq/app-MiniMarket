@@ -33,10 +33,10 @@ const EditarUser = () => {
       onSnapshot(userRef, (snapshot) => {
         const userData = snapshot.data();
         setUserData(userData);
-        setNewName(userData.nombre || "");
-        setNewApellido(userData.apellido || "");
+        setNewName(userData.firstName || "");
+        setNewApellido(userData.lastName || "");
         setNewPassword(userData.password || "");
-        setNewTelefono(userData.telefono || "");
+        setNewTelefono(userData.phone || "");
         setLoading(false);
       });
     }
@@ -50,9 +50,9 @@ const EditarUser = () => {
         const userDocRef = doc(db, "users", identifyUser.uid);
   
         const updatedUserData = {
-          nombre: newName || userData.nombre,
-          apellido: newApellido || userData.apellido,
-          telefono: newTelefono || userData.telefono,
+          nombre: newName || userData.firstName,
+          apellido: newApellido || userData.lastName,
+          telefono: newTelefono || userData.phone,
           password: newPassword || userData.password,
         };
   

@@ -74,8 +74,8 @@ function Perfil() {
             source={require("../images/AutoSinFondo.png")}
             style={CuentaStyles.logoImage}
           /> */}
-          {renderProfileInfo("user", `${user.nombre} ${user.apellido}`)}
-          {renderProfileInfo("envelope-o", user.correo)}
+          {renderProfileInfo("user", `${user.firstName} ${user.lastName}`)}
+          {renderProfileInfo("envelope-o", user.email)}
         </View>
       )}
     </View>
