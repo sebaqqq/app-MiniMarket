@@ -3,7 +3,7 @@ import { Text, View, Button, StyleSheet, Alert, ScrollView, Dimensions } from 'r
 import { Camera } from 'expo-camera';
 import { db } from "../DB/firebase";
 import { getDoc, doc } from "firebase/firestore";
-import { MaterialCommunityIcons } from '@expo/vector-icons'; // Importa el icono de Material Community Icons
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 const EscanerCodigoBarras = () => {
     const [hasPermission, setHasPermission] = useState(null);
@@ -24,8 +24,8 @@ const EscanerCodigoBarras = () => {
 
     const calcularTotal = () => {
         const total = carrito.reduce((acc, producto) => acc + (producto.precio * producto.cantidad), 0);
-        setTotalCompra(total.toFixed(0)); // Redondea el total hacia abajo y lo convierte en un número entero
-    };
+        setTotalCompra(total.toFixed(0)); 
+    }
 
     const handleBarCodeScanned = async ({ type, data }) => {
         setScanned(true);
@@ -42,7 +42,7 @@ const EscanerCodigoBarras = () => {
     
             const productoData = productoSnap.data();
             if (productoData) {
-                const nuevoProducto = { ...productoData, cantidad: 1 }; // Agrega una propiedad "cantidad" al producto escaneado
+                const nuevoProducto = { ...productoData, cantidad: 1 }; 
                 setCarrito([...carrito, nuevoProducto]);
             } else {
                 console.log("Error: el documento del producto está vacío");
@@ -67,7 +67,6 @@ const EscanerCodigoBarras = () => {
         });
         setCarrito(nuevoCarrito);
     };
-    
 
     if (hasPermission === null) {
         return <Text>Solicitando permiso de la cámara...</Text>;
@@ -89,31 +88,30 @@ const EscanerCodigoBarras = () => {
             <Text>Productos en el carrito: {carrito.length}</Text>
             <ScrollView style={styles.carritoContainer}>
             {carrito.map((producto) => (
-    <View key={producto.id} style={styles.producto}>
-        <View style={styles.nombrePrecioContainer}>
-            <Text numberOfLines={2} ellipsizeMode="tail">{producto.nombreProducto}</Text>
-            <Text>Precio: ${producto.precio.toFixed(0)}</Text>
-        </View>
-        <View style={styles.cantidadEliminarContainer}>
-            <View style={styles.cantidadContainer}>
-                <Button title={'-'} onPress={() => actualizarCantidad(producto.idProducto, Math.max(producto.cantidad - 1, 0))} />
-                <Text style={styles.cantidadText}>{producto.cantidad}</Text>
-                <Button title={'+'} onPress={() => actualizarCantidad(producto.idProducto, producto.cantidad + 1)} />
-            </View>
-            {producto.cantidad === 0 && (
-                <MaterialCommunityIcons name="delete-outline" size={20} color="white" style={styles.iconoEliminar} onPress={() => removeFromCart(producto.idProducto)} />
-            )}
-        </View>
-    </View>
-))}
-
+                <View key={producto.id} style={styles.producto}>
+                    <View style={styles.nombrePrecioContainer}>
+                        <Text numberOfLines={2} ellipsizeMode="tail">{producto.nombreProducto}</Text>
+                        <Text>Precio: ${producto.precio.toFixed(0)}</Text>
+                    </View>
+                    <View style={styles.cantidadEliminarContainer}>
+                        <View style={styles.cantidadContainer}>
+                            <Button title={'-'} onPress={() => actualizarCantidad(producto.idProducto, Math.max(producto.cantidad - 1, 0))} />
+                            <Text style={styles.cantidadText}>{producto.cantidad}</Text>
+                            <Button title={'+'} onPress={() => actualizarCantidad(producto.idProducto, producto.cantidad + 1)} />
+                        </View>
+                        {producto.cantidad === 0 && (
+                            <MaterialCommunityIcons name="delete-outline" size={20} color="white" style={styles.iconoEliminar} onPress={() => removeFromCart(producto.idProducto)} />
+                        )}
+                    </View>
+                </View>
+            ))}
             </ScrollView>
             <View style={styles.totalContainer}>
                 <Text style={styles.totalText}>Total: ${totalCompra}</Text>
             </View>
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {

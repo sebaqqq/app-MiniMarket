@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-picker/picker": "2.6.1",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
@@ -18,15 +20,14 @@
     "expo-barcode-scanner": "~12.9.3",
     "expo-camera": "^14.1.2",
     "expo-image-picker": "^14.7.1",
+    "expo-media-library": "~15.9.1",
     "expo-status-bar": "~1.11.1",
     "firebase": "^10.10.0",
     "react": "^18.2.0",
     "react-native": "0.73.6",
     "react-native-camera": "^4.2.1",
     "react-native-gesture-handler": "^2.16.0",
-    "react-native-picker-select": "^9.1.3",
-    "@react-native-picker/picker": "2.6.1",
-    "expo-media-library": "~15.9.1"
+    "react-native-picker-select": "^9.1.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
