@@ -3,25 +3,17 @@ import { View, Text, FlatList, StyleSheet, ActivityIndicator, TextInput, Touchab
 import { useNavigation } from "@react-navigation/native"; 
 import { db } from "../DB/firebase";
 import {  collection, getDocs, query, where, deleteDoc, doc } from 'firebase/firestore';
-import { BarCodeScanner } from 'expo-barcode-scanner'; 
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { Camera } from 'expo-camera';
-
-const CAMERA_PERMISSION = 'camera';
-
 
 const Lista = ({ route }) => {
   const [productos, setProductos] = useState([]);
   const [filtro, setFiltro] = useState("");
   const [loading, setLoading] = useState(true);
-  const [scanning, setScanning] = useState(false);
   const [productoExpandido, setProductoExpandido] = useState(null);
   const scrollViewRef = useRef(null);
   const navigation = useNavigation();
   const { carrito: carritoEnLista, setCarrito: setCarritoEnLista } = route.params || {};
   const [carrito, setCarrito] = useState(carritoEnLista || []);
-  const [hasPermission, setHasPermission] = useState(null); 
-
 
   useEffect(() => {
     const obtenerProductos = async () => {
@@ -54,31 +46,6 @@ const Lista = ({ route }) => {
     obtenerProductos();
   }, [filtro]); 
 
-
-  const handleEscanearCodigoBarras = () => {
-    setScanning(true);
-  };
-
-  const handleBarCodeScanned = ({ type, data }) => {
-    setScanning(false);
-    setFiltro(data);
-  };
-
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { status } = await Camera.requestCameraPermissionsAsync();
-        console.log('Status de permiso:', status);
-        setHasPermission(status === 'granted');
-      } catch (error) {
-        console.error('Error al solicitar permisos de la cámara:', error);
-      }
-    })();
-  }, []);
-  
-
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -86,7 +53,6 @@ const Lista = ({ route }) => {
       </View>
     );
   }
-
 
   const handleEliminarProducto = async (id) => {
     try {
@@ -127,7 +93,6 @@ const Lista = ({ route }) => {
     );
   };
 
-
   const handleAgregarAlCarrito = (producto) => {
     try {
       setCarrito((prevCarrito) => [...prevCarrito, { ...producto, cantidad: 1 }]);
@@ -139,10 +104,6 @@ const Lista = ({ route }) => {
     }
   };
   
-  const handleNavegarACarrito = () => {
-    navigation.navigate("CarritoCompra", { carrito, setCarrito });
-  };
-
   const handleActualizarCantidad = (productId, newQuantity) => {
     const updatedCarrito = carrito.map((item) =>
       item.id === productId ? { ...item, cantidad: newQuantity } : item
@@ -162,7 +123,6 @@ const Lista = ({ route }) => {
     });
   };
 
-
   const renderizarItem = ({ item }) => (
     <View style={styles.itemContainer}>
       <TouchableOpacity onPress={() => handlePresionarProducto(item.id)}>
@@ -170,7 +130,6 @@ const Lista = ({ route }) => {
           <Text style={styles.nombre}>{`Nombre: ${item.nombreProducto}`}</Text>
           <Text style={styles.detalle}>{`Categoría: ${item.categoria}`}</Text>
           <Text style={styles.detalle}>{`Precio/u: ${item.precio}`}</Text>
-
           {productoExpandido === item.id && (
             <View style={styles.botonesContainer}>
               <TouchableOpacity
@@ -186,7 +145,6 @@ const Lista = ({ route }) => {
               >
                 <Icon name="pen" size={20} color="#fff" />
               </TouchableOpacity>
-
               <TouchableOpacity
                 style={styles.botonEliminar}
                 onPress={() => handleEliminarProducto(item.id)}
@@ -198,15 +156,9 @@ const Lista = ({ route }) => {
         </View>
       </TouchableOpacity>
     </View>
-
-
   );
 
-
-  
-
   if (loading) {
-
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -216,18 +168,8 @@ const Lista = ({ route }) => {
 
   return (
     <View style={styles.container}>
-
       <View style={styles.botonesContainerInicio}>
-
-        <TouchableOpacity style={styles.boton} onPress={() => navigation.navigate("Historial")}>
-          <Text style={styles.textoBoton}>Ver Historial</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.boton} onPress={handleNavegarACarrito}>
-          <Icon name="shopping-cart" size={20} color="#fff" />
-        </TouchableOpacity>
       </View>
-
       <View style={styles.filtrosContainer}>
         <View style={styles.filtroIcono}>
           <Icon name="search" size={20} color="#555" />
@@ -239,10 +181,7 @@ const Lista = ({ route }) => {
           onChangeText={setFiltro}
         />
       </View>
-
-
       <Text style={styles.tituloLista}>Lista de Productos</Text>
-
       <FlatList
         ref={scrollViewRef}
         data={productos}
@@ -301,8 +240,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 
-  
-
   filtroIcono: {
     justifyContent: "center",
     paddingRight: 8,
@@ -323,65 +260,58 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
 
   },
-
-
-botonesContainerInicio: {
-  flexDirection: 'row',
-  justifyContent: 'space-around', // Ajusta el espacio entre los botones
-  marginBottom: 20,
-},
-boton: {
-  backgroundColor: '#3498db',
-  paddingVertical: 10,
-  paddingHorizontal: 20,
-  borderRadius: 5,
-},
-textoBoton: {
-  color: 'white',
-  fontSize: 14,
-  fontWeight: 'bold',
-},
-
-
-botonesContainer: {
-  flexDirection: "row",
-  marginVertical: 8, // Cambia marginTop a marginVertical
-},
-botonAgregarCarrito: {
-  backgroundColor: "#007bff",
-  padding: 5,
-  borderRadius: 10,
-  alignItems: "center",
-  justifyContent: "center",
-  height: 40,
-  paddingHorizontal: 10,
-  marginRight: 8,
-  maxWidth: 100, // Agrega un ancho máximo según sea necesario
-},
-botonActualizar: {
-  backgroundColor: "#28a745",
-  padding: 5,
-  borderRadius: 10,
-  alignItems: "center",
-  justifyContent: "center",
-  height: 40,
-  paddingHorizontal: 10,
-  marginRight: 8,
-  maxWidth: 100, // Agrega un ancho máximo según sea necesario
-},
-botonEliminar: {
-  backgroundColor: "#ff0000",
-  padding: 5,
-  borderRadius: 10,
-  alignItems: "center",
-  justifyContent: "center",
-  height: 40,
-  paddingHorizontal: 10,
-  maxWidth: 100, // Agrega un ancho máximo según sea necesario
-},
-
-
-
+  botonesContainerInicio: {
+    flexDirection: 'row',
+    justifyContent: 'space-around', 
+    marginBottom: 20,
+  },
+  boton: {
+    backgroundColor: '#3498db',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  textoBoton: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  botonesContainer: {
+    flexDirection: "row",
+    marginVertical: 8, 
+  },
+  botonAgregarCarrito: {
+    backgroundColor: "#007bff",
+    padding: 5,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    height: 40,
+    paddingHorizontal: 10,
+    marginRight: 8,
+    maxWidth: 100, 
+  },
+  botonActualizar: {
+    backgroundColor: "#28a745",
+    padding: 5,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    height: 40,
+    paddingHorizontal: 10,
+    marginRight: 8,
+    maxWidth: 100, 
+  },
+  botonEliminar: {
+    backgroundColor: "#ff0000",
+    padding: 5,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    height: 40,
+    paddingHorizontal: 10,
+    maxWidth: 100, 
+  },
   botonCarrito: {
     backgroundColor: "#007bff", 
     padding: 5,
@@ -389,8 +319,6 @@ botonEliminar: {
     alignItems: "center",    
     justifyContent: "center",
   },
-
-
   botonHistorial: {
     backgroundColor: "#007bff",
     padding: 10,
@@ -404,8 +332,6 @@ botonEliminar: {
     fontSize: 16,
     fontWeight: "bold",
   },
-
-
   scannerContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -423,7 +349,6 @@ botonEliminar: {
     fontSize: 14,
     fontWeight: 'bold',
   },
-  
 });
 
 export default Lista;

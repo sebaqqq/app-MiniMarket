@@ -1,13 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Button, StyleSheet, Alert, Dimensions } from 'react-native';
+import { useNavigation } from "@react-navigation/native";
 import { Camera } from 'expo-camera';
 import { db } from "../DB/firebase";
 import { getDoc, doc } from "firebase/firestore";
+import { Fontisto } from '@expo/vector-icons';
 
 const EscanerCodigoBarras = () => {
+    const navigation = useNavigation();
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const [carrito, setCarrito] = useState([]);
+
+    React.useLayoutEffect(() => {
+        navigation.setOptions({ 
+            headerRight: () => (
+                <Fontisto
+                    name="history"
+                    size={26}
+                    right={20}
+                    color="#0077B6"
+                    onPress={() => navigation.navigate('Historial')}
+                />
+            ),
+        });
+    }, [navigation]);
 
     useEffect(() => {
         (async () => {
