@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, StyleSheet, Alert } from 'react-native';
+import { Text, View, Button, StyleSheet, Alert, Dimensions } from 'react-native';
 import { Camera } from 'expo-camera';
 import { db } from "../DB/firebase";
 import { getDoc, doc } from "firebase/firestore";
-import CarritoCompra from "./Carrito";
 
 const EscanerCodigoBarras = () => {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
-    const [producto, setProducto] = useState(null);
-    const [codigoBarras, setCodigoBarras] = useState(null);
     const [carrito, setCarrito] = useState([]);
 
     useEffect(() => {
@@ -21,7 +18,6 @@ const EscanerCodigoBarras = () => {
 
     const handleBarCodeScanned = async ({ type, data }) => {
         setScanned(true);
-        setCodigoBarras(data);
     
         try {
             const productoDoc = doc(db, "productos", data);
@@ -35,7 +31,6 @@ const EscanerCodigoBarras = () => {
     
             const productoData = productoSnap.data();
             if (productoData) {
-                setProducto(productoData);
                 setCarrito([...carrito, productoData]);
             } else {
                 console.log("Error: el documento del producto está vacío");
@@ -60,18 +55,23 @@ const EscanerCodigoBarras = () => {
 
     return (
         <View style={styles.container}>
-            <Camera
-                style={styles.camera}
-                type={Camera.Constants.Type.back}
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-            />
-            {scanned && <Button title={'Escanear de nuevo'} onPress={() => {
-                setScanned(false);
-                setCodigoBarras(null);
-            }} />}
+            <View style={styles.cameraContainer}>
+                <Camera
+                    style={styles.camera}
+                    type={Camera.Constants.Type.back}
+                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                />
+            </View>
+            {scanned && <Button title={'Escanear de nuevo'} onPress={() => setScanned(false)} />}
             <Text>Productos en el carrito: {carrito.length}</Text>
-            <Button title="Ver carrito" onPress={() => console.log(carrito)} />
-            <CarritoCompra carrito={carrito} removeFromCart={removeFromCart} />
+            <View>
+                {carrito.map((producto, index) => (
+                    <View key={index} style={styles.producto}>
+                        <Text>{producto.nombreProducto}</Text>
+                        <Text>Precio: ${Math.floor(producto.precio)}</Text>
+                    </View>
+                ))}
+            </View>
         </View>
     );
 };
@@ -81,8 +81,22 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
     },
+    cameraContainer: {
+        flex: 1,
+        aspectRatio: 1, // Hace que el contenedor mantenga una relación de aspecto de 1:1
+        height: Dimensions.get('window').height * 4, // La cámara ocupará la mitad del alto de la pantalla
+    },
     camera: {
         flex: 1,
+    },
+    producto: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
     },
 });
 
