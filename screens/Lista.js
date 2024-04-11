@@ -2,18 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native"; 
 import { db } from "../DB/firebase";
-import {  collection, getDocs, query, where, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, query, where, deleteDoc, doc } from 'firebase/firestore';
 import Icon from "react-native-vector-icons/FontAwesome5";
 
-const Lista = ({ route }) => {
+const Lista = () => {
+  const scrollViewRef = useRef(null);
+  const navigation = useNavigation();
   const [productos, setProductos] = useState([]);
   const [filtro, setFiltro] = useState("");
   const [loading, setLoading] = useState(true);
   const [productoExpandido, setProductoExpandido] = useState(null);
-  const scrollViewRef = useRef(null);
-  const navigation = useNavigation();
-  const { carrito: carritoEnLista, setCarrito: setCarritoEnLista } = route.params || {};
-  const [carrito, setCarrito] = useState(carritoEnLista || []);
 
   useEffect(() => {
     const obtenerProductos = async () => {
@@ -83,44 +81,10 @@ const Lista = ({ route }) => {
     }
   };
 
-  const handleActualizarProducto = (producto) => {
-    navigation.navigate('ActualizarLista');
-  };
-
   const handlePresionarProducto = (id) => {
     setProductoExpandido((prevProductoExpandido) => 
       prevProductoExpandido === id ? null : id
     );
-  };
-
-  const handleAgregarAlCarrito = (producto) => {
-    try {
-      setCarrito((prevCarrito) => [...prevCarrito, { ...producto, cantidad: 1 }]);
-      console.log("Producto añadido al carrito:", producto);
-      Alert.alert("Agregado al carrito", `${producto.nombreProducto} ha sido añadido al carrito`);
-    } catch (error) {
-      console.error("Error al agregar producto al carrito:", error);
-      Alert.alert("Error", "Hubo un error al agregar el producto al carrito. Por favor, inténtalo de nuevo.");
-    }
-  };
-  
-  const handleActualizarCantidad = (productId, newQuantity) => {
-    const updatedCarrito = carrito.map((item) =>
-      item.id === productId ? { ...item, cantidad: newQuantity } : item
-    );
-
-    setCarrito(updatedCarrito);
-
-    const newTotalCompra = updatedCarrito.reduce(
-      (total, item) => total + item.precio * item.cantidad,
-      0
-    );
-
-    setTotalCompra(newTotalCompra);
-
-    navigation.setOptions({
-      params: { carrito: updatedCarrito, setCarrito: setCarritoEnLista },
-    });
   };
 
   const renderizarItem = ({ item }) => (
@@ -132,13 +96,6 @@ const Lista = ({ route }) => {
           <Text style={styles.detalle}>{`Precio/u: ${item.precio}`}</Text>
           {productoExpandido === item.id && (
             <View style={styles.botonesContainer}>
-              <TouchableOpacity
-                style={styles.botonAgregarCarrito}
-                onPress={() => handleAgregarAlCarrito(item)}
-              >
-                <Icon name="cart-plus" size={20} color="#fff" />
-              </TouchableOpacity>
-
               <TouchableOpacity
                 style={styles.botonActualizar}
                 onPress={() => navigation.navigate('ActualizarLista', { producto: item })}
@@ -197,7 +154,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-
   itemContainer: {
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",

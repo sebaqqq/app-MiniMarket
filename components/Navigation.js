@@ -21,6 +21,7 @@ import Loading from './Loading';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
+import { Fontisto } from '@expo/vector-icons';
 
 export default function Navigation () {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -69,7 +70,6 @@ export default function Navigation () {
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           <Stack.Screen name="Crear Categoria" component={CrearCategoria} />
           <Stack.Screen name="ActualizarLista" component={ActualizarLista} />
-          <Stack.Screen name="Historial" component={Historial} />
           <Stack.Screen name="CarritoCompra" component={CarritoCompra} />
           <Stack.Screen name="CreateAccount" component={CreateAccount} />
         </Stack.Navigator>
@@ -116,6 +116,16 @@ export default function Navigation () {
             tabBarLabel: 'Codigo de Barras',
             tabBarIcon: ({ color, size }) => (
               <AntDesign name="barcode" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen 
+          name="Historial" 
+          component={Historial}
+          options={{
+            tabBarLabel: 'Historial',
+            tabBarIcon: ({ color, size }) => (
+              <Fontisto name="history" size={size} color={color} />
             ),
           }}
         />
