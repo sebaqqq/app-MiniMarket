@@ -15,10 +15,10 @@ const ActualizarLista = ({ route }) => {
     const handleActualizarProducto = async () => {
         try {
             const nuevosValores = {
-            categoria: nuevaCategoria,
-            nombreProducto: nuevoNombre,
-            precio: parseFloat(nuevoPrecio),
-            precioOferta: parseFloat(nuevoPrecioOferta), 
+                categoria: nuevaCategoria,
+                nombreProducto: nuevoNombre,
+                precio: parseFloat(nuevoPrecio),
+                precioOferta: parseFloat(nuevoPrecioOferta), 
             };
 
             await updateDoc(doc(db, "productos", id), nuevosValores);

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet, Button, Alert, TouchableOpacity } from "react-native";
-import { addDoc, collection, serverTimestamp, db, params} from "firebase/firestore"; 
+import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity } from "react-native";
+import { addDoc, collection, serverTimestamp} from "firebase/firestore";
+import { db } from "../DB/firebase"; 
 import Icon from "react-native-vector-icons/FontAwesome5";
 
 const CarritoCompra = ({ route, navigation }) => {
@@ -36,9 +37,9 @@ const CarritoCompra = ({ route, navigation }) => {
             {
                 text: "Vaciar Carrito",
                 onPress: () => {
-                setTotalCompra(0);
-                setCarrito([]); 
-                navigation.navigate("carrito", { carrito: [] });
+                    setTotalCompra(0);
+                    setCarrito([]); 
+                    navigation.navigate("carrito", { carrito: [] });
                 },
             },
             ],
@@ -49,13 +50,13 @@ const CarritoCompra = ({ route, navigation }) => {
     const handleRealizarVenta = async () => {
         try {
             if (!carrito) {
-            console.error("Error al realizar la venta: Carrito no definido");
-            return;
+                console.error("Error al realizar la venta: Carrito no definido");
+                return;
             }
             const ventaRef = await addDoc(collection(db, "ventas"), {
-            productos: carrito,
-            total: totalCompra.toFixed(2).replace(/\.?0+$/, ''), 
-            fechaHora: serverTimestamp(),
+                productos: carrito,
+                total: totalCompra.toFixed(2).replace(/\.?0+$/, ''), 
+                fechaHora: serverTimestamp(),
             });
 
             Alert.alert("Venta realizada", "La venta se ha registrado exitosamente.");
@@ -74,39 +75,37 @@ const CarritoCompra = ({ route, navigation }) => {
         <TouchableOpacity onPress={() => navigation.navigate("Lista", { carrito, setCarrito })}>
         <Text style={styles.volverLista}>Volver a la Lista</Text>
         </TouchableOpacity>
-
         <Text style={styles.tituloCarrito}>Carrito de Compras</Text>
-
         {carrito.length > 0 ? (
-        <>
-            <FlatList
-            data={carrito}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderizarItemCarrito}
-            />
+            <>
+                <FlatList
+                data={carrito}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderizarItemCarrito}
+                />
 
-            <Text style={[styles.total, { textAlign: "center" }]}>{`Total: $${totalCompra
-            .toFixed(2)
-            .replace(/\.?0+$/, '')}`}</Text>
+                <Text style={[styles.total, { textAlign: "center" }]}>{`Total: $${totalCompra
+                .toFixed(2)
+                .replace(/\.?0+$/, '')}`}</Text>
 
-            <View style={styles.botonesContainer}>
-            <TouchableOpacity
-                style={[styles.boton, { backgroundColor: "#ff0000" }]}
-                onPress={handleVaciarCarrito}
-            >
-                <Text style={styles.botonTexto}>Vaciar Carrito</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-                style={[styles.boton, { backgroundColor: "#007bff" }]}
-                onPress={handleRealizarVenta}
-            >
-                <Text style={styles.botonTexto}>Realizar Venta</Text>
-            </TouchableOpacity>
-            </View>
-        </>
+                <View style={styles.botonesContainer}>
+                <TouchableOpacity
+                    style={[styles.boton, { backgroundColor: "#ff0000" }]}
+                    onPress={handleVaciarCarrito}
+                >
+                    <Text style={styles.botonTexto}>Vaciar Carrito</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                    style={[styles.boton, { backgroundColor: "#007bff" }]}
+                    onPress={handleRealizarVenta}
+                >
+                    <Text style={styles.botonTexto}>Realizar Venta</Text>
+                </TouchableOpacity>
+                </View>
+            </>
         ) : (
-        <Text style={styles.mensajeVacio}>El carrito está vacío</Text>
+            <Text style={styles.mensajeVacio}>El carrito está vacío</Text>
         )}
     </View>
 );

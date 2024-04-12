@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../DB/firebase";
 
-
 const CrearCategoria = () => {
-    const navigation = useNavigation();
     const [categoria, setCategoria] = useState('');
 
     const handleChangeCategoria = (value) => {
@@ -40,8 +37,6 @@ const CrearCategoria = () => {
         }
     };
     
-    
-
     return (
         <View style={styles.container}>
             <Text>Ingrese el nombre de la categoría</Text>
