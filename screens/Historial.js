@@ -16,12 +16,11 @@ const Historial = () => {
         const historialSnapshot = await getDocs(historialCollection);
         const historialData = historialSnapshot.docs.map(doc => {
           const data = doc.data();
-          // Convierte el campo totalCompra de string a number
           const totalCompra = parseFloat(data.totalCompra);
           return {
             id: doc.id,
             ...data,
-            totalCompra: isNaN(totalCompra) ? 0 : totalCompra // Si es NaN, asigna 0
+            totalCompra: isNaN(totalCompra) ? 0 : totalCompra 
           };
         });
         setHistorial(historialData);
@@ -34,14 +33,27 @@ const Historial = () => {
       }
     };
     fetchHistorial();
+
+    const reiniciarTotales = setInterval(() => {
+      setTotalPorFecha({});
+    }, 24 * 60 * 60 * 1000); 
+
+    return () => clearInterval(reiniciarTotales);
   }, []);
 
-  // Función para calcular el total de compras por fecha
   const calcularTotalPorFecha = (historialData) => {
     const totalPorFecha = {};
+    const fechaActual = new Date().toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
     historialData.forEach(item => {
       const fecha = formatFecha(item.fecha);
-      totalPorFecha[fecha] = (totalPorFecha[fecha] || 0) + item.totalCompra;
+      if (fecha === fechaActual) {
+        const totalCompra = parseFloat(item.totalCompra);
+        totalPorFecha[fecha] = (totalPorFecha[fecha] || 0) + totalCompra;
+      }
     });
     setTotalPorFecha(totalPorFecha);
   };
