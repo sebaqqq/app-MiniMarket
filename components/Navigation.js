@@ -17,6 +17,7 @@ import CarritoCompra from '../screens/Carrito';
 import CreateAccount from '../screens/CrearCuenta';
 import Perfil from '../screens/Cuenta';
 import EditarUser from '../screens/EditarUser';
+import DetallesCarrito from '../screens/DetallesCarrito';
 
 import Loading from './Loading';
 
@@ -76,6 +77,7 @@ export default function Navigation () {
           <Stack.Screen name="CarritoCompra" component={CarritoCompra} />
           <Stack.Screen name="CreateAccount" component={CreateAccount} />
           <Stack.Screen name="Editar Usuario" component={EditarUser} />
+          <Stack.Screen name="DetallesCarrito" component={DetallesCarrito} />
         </Stack.Navigator>
       </>
     )

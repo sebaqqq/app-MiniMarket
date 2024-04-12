@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, Button, StyleSheet, Alert, FlatList } from 'react-native';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { db } from "../DB/firebase";
 import { collection, getDocs } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/native'; 
 
 const Historial = () => {
+  const navigation = useNavigation();
   const [historial, setHistorial] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,12 +60,24 @@ const Historial = () => {
     setTotalPorFecha(totalPorFecha);
   };
 
+  // const renderItem = ({ item }) => (
+  //   <View style={styles.itemContainer}>
+  //     <Text>ID: {item.id}</Text>
+  //     <Text>Fecha: {formatFecha(item.fecha)}</Text>
+  //     <Text>Total Compra: {item.totalCompra}</Text>
+  //   </View>
+  // );
+
   const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Text>ID: {item.id}</Text>
-      <Text>Fecha: {formatFecha(item.fecha)}</Text>
-      <Text>Total Compra: {item.totalCompra}</Text>
-    </View>
+    <TouchableOpacity onPress={() => {
+      navigation.navigate('DetallesCarrito', { carritoId: item.id });
+    }}>
+      <View style={styles.itemContainer}>
+        <Text>ID: {item.id}</Text>
+        <Text>Fecha: {formatFecha(item.fecha)}</Text>
+        <Text>Total Compra: {item.totalCompra}</Text>
+      </View>
+    </TouchableOpacity>
   );
 
   const formatFecha = (fecha) => {
