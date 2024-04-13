@@ -60,14 +60,6 @@ const Historial = () => {
     setTotalPorFecha(totalPorFecha);
   };
 
-  // const renderItem = ({ item }) => (
-  //   <View style={styles.itemContainer}>
-  //     <Text>ID: {item.id}</Text>
-  //     <Text>Fecha: {formatFecha(item.fecha)}</Text>
-  //     <Text>Total Compra: {item.totalCompra}</Text>
-  //   </View>
-  // );
-
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => {
       navigation.navigate('DetallesCarrito', { carritoId: item.id });
