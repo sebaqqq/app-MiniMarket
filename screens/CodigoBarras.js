@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, Button, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
 import { Camera } from 'expo-camera';
 import { db } from "../DB/firebase";
@@ -10,6 +10,7 @@ const EscanerCodigoBarras = () => {
     const [carrito, setCarrito] = useState([]);
     const [totalCompra, setTotalCompra] = useState(0);
     const [cameraActive, setCameraActive] = useState(true);
+    const [productoEnCarrito, setProductoEnCarrito] = useState(null);
 
     useEffect(() => {
         (async () => {
@@ -42,13 +43,12 @@ const EscanerCodigoBarras = () => {
             if (productoData) {
                 const existingProductIndex = carrito.findIndex(item => item.idProducto === productoData.idProducto);
                 if (existingProductIndex !== -1) {
-                    const updatedCart = [...carrito];
-                    updatedCart[existingProductIndex].cantidad += 1;
-                    setCarrito(updatedCart);
-                } else {
-                    const nuevoProducto = { ...productoData, cantidad: 1 };
-                    setCarrito([...carrito, nuevoProducto]);
+                    setProductoEnCarrito(productoData.idProducto);
+                    return;
                 }
+
+                const nuevoProducto = { ...productoData, cantidad: 1 };
+                setCarrito([...carrito, nuevoProducto]);
             } else {
                 console.log("Error: el documento del producto está vacío");
                 Alert.alert("Error: el documento del producto está vacío");
@@ -58,6 +58,7 @@ const EscanerCodigoBarras = () => {
             Alert.alert("Error al obtener el producto");
         }
     };
+
     const removeFromCart = (productId) => {
         setCarrito(carrito.filter(item => item.idProducto !== productId));
     };
@@ -120,7 +121,7 @@ const EscanerCodigoBarras = () => {
             <Text>Productos en el carrito: {carrito.length}</Text>
             <ScrollView style={styles.carritoContainer}>
             {carrito.map((producto) => (
-                <View key={producto.id} style={styles.producto}>
+                <View key={producto.id} style={[styles.producto, productoEnCarrito === producto.idProducto && { backgroundColor: 'yellow' }]}>
                     <View style={styles.nombrePrecioContainer}>
                         <Text numberOfLines={2} ellipsizeMode="tail">{producto.nombreProducto}</Text>
                         <Text>Precio: ${producto.precio.toFixed(0)}</Text>
@@ -211,3 +212,4 @@ const styles = StyleSheet.create({
 });
 
 export default EscanerCodigoBarras;
+
