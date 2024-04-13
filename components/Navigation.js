@@ -13,7 +13,6 @@ import ForgotPassword from '../screens/RecuperarContrasena';
 import EscanerCodigoBarras from '../screens/CodigoBarras';
 import CrearLista from '../screens/CrearLista';
 import Historial from '../screens/Historial';
-import CarritoCompra from '../screens/Carrito';
 import CreateAccount from '../screens/CrearCuenta';
 import Perfil from '../screens/Cuenta';
 import EditarUser from '../screens/EditarUser';
@@ -74,7 +73,6 @@ export default function Navigation () {
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           <Stack.Screen name="Crear Categoria" component={CrearCategoria} />
           <Stack.Screen name="ActualizarLista" component={ActualizarLista} />
-          <Stack.Screen name="CarritoCompra" component={CarritoCompra} />
           <Stack.Screen name="CreateAccount" component={CreateAccount} />
           <Stack.Screen name="Editar Usuario" component={EditarUser} />
           <Stack.Screen name="DetallesCarrito" component={DetallesCarrito} />
