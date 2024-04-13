@@ -40,8 +40,15 @@ const EscanerCodigoBarras = () => {
     
             const productoData = productoSnap.data();
             if (productoData) {
-                const nuevoProducto = { ...productoData, cantidad: 1 }; 
-                setCarrito([...carrito, nuevoProducto]);
+                const existingProductIndex = carrito.findIndex(item => item.idProducto === productoData.idProducto);
+                if (existingProductIndex !== -1) {
+                    const updatedCart = [...carrito];
+                    updatedCart[existingProductIndex].cantidad += 1;
+                    setCarrito(updatedCart);
+                } else {
+                    const nuevoProducto = { ...productoData, cantidad: 1 };
+                    setCarrito([...carrito, nuevoProducto]);
+                }
             } else {
                 console.log("Error: el documento del producto está vacío");
                 Alert.alert("Error: el documento del producto está vacío");
@@ -51,7 +58,6 @@ const EscanerCodigoBarras = () => {
             Alert.alert("Error al obtener el producto");
         }
     };
-
     const removeFromCart = (productId) => {
         setCarrito(carrito.filter(item => item.idProducto !== productId));
     };
