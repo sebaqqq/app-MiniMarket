@@ -113,6 +113,7 @@ const EscanerCodigoBarras = () => {
                         flashMode={Camera.Constants.FlashMode.off}
                         ratio="4:3"
                     />
+                    <View style={styles.scannerRect}></View>
                 </View>
             )}
             <Button title={cameraActive ? 'Desactivar Cámara' : 'Activar Cámara'} onPress={toggleCamera} />
@@ -158,6 +159,18 @@ const styles = StyleSheet.create({
         flex: 1,
         aspectRatio: 4/3,
         height: Dimensions.get('window').height * 0.5,
+        position: 'relative',
+    },
+    scannerRect: {
+        position: 'absolute',
+        top: '25%',
+        left: '10%',
+        width: '80%',
+        height: '50%',
+        borderWidth: 2,
+        borderColor: 'red',
+        borderRadius: 10,
+        opacity: 0.5,
     },
     carritoContainer: {
         maxHeight: 200,
