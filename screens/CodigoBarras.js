@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Text, View, Button, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import { Camera } from 'expo-camera';
 import { db } from "../DB/firebase";
 import { getDoc, doc, collection, addDoc  } from "firebase/firestore";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 const EscanerCodigoBarras = () => {
     const [hasPermission, setHasPermission] = useState(null);
-    const [scanned, setScanned] = useState(false);
     const [carrito, setCarrito] = useState([]);
     const [totalCompra, setTotalCompra] = useState(0);
+    const [cameraActive, setCameraActive] = useState(true);
 
     useEffect(() => {
         (async () => {
-            const { status } = await BarCodeScanner.requestPermissionsAsync();
+            const { status } = await Camera.requestCameraPermissionsAsync();
             setHasPermission(status === 'granted');
         })();
     }, []);
@@ -28,8 +28,6 @@ const EscanerCodigoBarras = () => {
     }
 
     const handleBarCodeScanned = async ({ type, data }) => {
-        setScanned(true);
-    
         try {
             const productoDoc = doc(db, "productos", data);
             const productoSnap = await getDoc(productoDoc);
@@ -86,6 +84,10 @@ const EscanerCodigoBarras = () => {
         }
     };    
 
+    const toggleCamera = () => {
+        setCameraActive(!cameraActive);
+    };
+
     if (hasPermission === null) {
         return <Text>Solicitando permiso de la cámara...</Text>;
     }
@@ -95,13 +97,19 @@ const EscanerCodigoBarras = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.cameraContainer}>
-                <BarCodeScanner
-                    style={StyleSheet.absoluteFillObject}
-                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                />
-            </View>
-            {scanned && <Button title={'Escanear de nuevo'} onPress={() => setScanned(false)} />}
+            {cameraActive && (
+                <View style={styles.cameraContainer}>
+                    <Camera
+                        style={[StyleSheet.absoluteFillObject, styles.camera]}
+                        onBarCodeScanned={handleBarCodeScanned}
+                        type={Camera.Constants.Type.back}
+                        autoFocus={Camera.Constants.AutoFocus.on}
+                        flashMode={Camera.Constants.FlashMode.off}
+                        ratio="4:3"
+                    />
+                </View>
+            )}
+            <Button title={cameraActive ? 'Desactivar Cámara' : 'Activar Cámara'} onPress={toggleCamera} />
             <Text>Productos en el carrito: {carrito.length}</Text>
             <ScrollView style={styles.carritoContainer}>
             {carrito.map((producto) => (
@@ -138,15 +146,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     camera: {
-        ...StyleSheet.absoluteFillObject,
-        aspectRatio:4/3
+        aspectRatio: 4/3,
     },
     cameraContainer: {
         flex: 1,
-        aspectRatio: 1,
+        aspectRatio: 4/3,
         height: Dimensions.get('window').height * 0.5,
-        aspectRatio:4/3,
-        
     },
     carritoContainer: {
         maxHeight: 200,
