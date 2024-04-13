@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Button, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
 import { Camera } from 'expo-camera';
+import { Audio } from 'expo-av';
 import { db } from "../DB/firebase";
 import { getDoc, doc, collection, addDoc  } from "firebase/firestore";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
@@ -28,6 +29,17 @@ const EscanerCodigoBarras = () => {
         setTotalCompra(total.toFixed(0)); 
     }
 
+    const playSound = async () => {
+        try {
+            const { sound } = await Audio.Sound.createAsync(
+                require('../sound/beep.mp3')
+            );
+            await sound.playAsync();
+        } catch (error) {
+            console.error('Error al reproducir el sonido:', error);
+        }
+    };
+
     const handleBarCodeScanned = async ({ type, data }) => {
         try {
             const productoDoc = doc(db, "productos", data);
@@ -49,6 +61,8 @@ const EscanerCodigoBarras = () => {
 
                 const nuevoProducto = { ...productoData, cantidad: 1 };
                 setCarrito([...carrito, nuevoProducto]);
+                
+                playSound();
             } else {
                 console.log("Error: el documento del producto está vacío");
                 Alert.alert("Error: el documento del producto está vacío");
