@@ -4,10 +4,10 @@
     "slug": "app-miniMarket",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/montino-sinFondo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/montino-sinFondo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

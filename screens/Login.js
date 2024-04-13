@@ -55,9 +55,9 @@ const Login = () => {
         keyboardShouldPersistTaps="handled"
       >
         <View style={LoginStyles.centeredContainer}>
-          <Text style={LoginStyles.title}>Montino</Text>
+          <Text style={LoginStyles.title}>MONTINO</Text>
           {/* <Image
-            source={require("../images/AutoSinFondo.png")}
+            source={require("../images/montinoLogo-sinFondo.png")}
             style={LoginStyles.logoImage}
           /> */}
           <Text style={LoginStyles.headerText}>Iniciar Sesión</Text>
