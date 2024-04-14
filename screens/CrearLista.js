@@ -208,24 +208,34 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        backgroundColor: '#f0f0f0',
     },
     inputContainer: {
         marginBottom: 16,
     },
     input: {
-        height: 30,
-        borderBottomWidth: 1,
-        borderColor: 'gray',
-        paddingLeft: 8,
-        textAlignVertical: 'bottom',
+        height: 40,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 4,
+        paddingHorizontal: 10,
+        backgroundColor: '#fff',
     },
     buttonContainer: {
         marginTop: 16,
+        backgroundColor: '#0077B6',
+        borderRadius: 4,
+    },
+    button: {
+        color: '#fff',
+        textAlign: 'center',
+        paddingVertical: 10,
     },
     cameraContainer: {
-        aspectRatio: 4/3, 
+        aspectRatio: 4 / 3,
         overflow: 'hidden',
-        borderRadius: 10, 
+        borderRadius: 10,
+        marginBottom: 16,
     },
     camera: {
         flex: 1,
@@ -235,6 +245,12 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 16,
     },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });
+
 
 export default CrearLista;
