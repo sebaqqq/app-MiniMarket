@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TextInput, TouchableOpacity, Alert, RefreshControl } from "react-native";
 import { useNavigation } from "@react-navigation/native"; 
 import { db } from "../DB/firebase";
 import { collection, getDocs, query, where, deleteDoc, doc } from 'firebase/firestore';
@@ -12,45 +12,44 @@ const Lista = () => {
   const [filtro, setFiltro] = useState("");
   const [loading, setLoading] = useState(true);
   const [productoExpandido, setProductoExpandido] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const obtenerProductos = async () => {
+    try {
+      const productosCollection = collection(db, "productos");
+      let queryProductos = productosCollection;
+
+      if (filtro) {
+        queryProductos = query(
+          productosCollection,
+          where("nombreProducto", ">=", filtro),
+          where("nombreProducto", "<=", filtro + '\uf8ff')
+        );
+      }
+
+      const productosSnapshot = await getDocs(queryProductos);
+      const listaProductos = productosSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setProductos(listaProductos);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al obtener productos:", error);
+      setLoading(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await obtenerProductos();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
-    const obtenerProductos = async () => {
-      try {
-        const productosCollection = collection(db, "productos");
-        let queryProductos = productosCollection;
-
-        if (filtro) {
-          queryProductos = query(
-            productosCollection,
-            where("nombreProducto", ">=", filtro),
-            where("nombreProducto", "<=", filtro + '\uf8ff')
-          );
-        }
-
-        const productosSnapshot = await getDocs(queryProductos);
-        const listaProductos = productosSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        setProductos(listaProductos);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error al obtener productos:", error);
-        setLoading(false);
-      }
-    };
-
     obtenerProductos();
-  }, [filtro]); 
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  }, [filtro]);
 
   const handleEliminarProducto = async (id) => {
     try {
@@ -80,6 +79,14 @@ const Lista = () => {
       console.error("Error al eliminar producto:", error);
     }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   const handlePresionarProducto = (id) => {
     setProductoExpandido((prevProductoExpandido) => 
@@ -115,18 +122,8 @@ const Lista = () => {
     </View>
   );
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <View style={styles.botonesContainerInicio}>
-      </View>
       <View style={styles.filtrosContainer}>
         <View style={styles.filtroIcono}>
           <Icon name="search" size={20} color="#555" />
@@ -144,6 +141,12 @@ const Lista = () => {
         data={productos}
         keyExtractor={(item) => item.id}
         renderItem={renderizarItem}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
     </View>
   );
@@ -172,15 +175,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#555",
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   filtrosContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   filtroInput: {
     flex: 1,
@@ -195,7 +198,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 8,
   },
-
   filtroIcono: {
     justifyContent: "center",
     paddingRight: 8,
@@ -204,48 +206,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10, 
     borderWidth: 1,
-
-  },
-  filtroInput: {
-    flex: 1,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingLeft: 8,
-    borderBottomRightRadius: 10, 
-    borderTopRightRadius: 10,
-
-  },
-  botonesContainerInicio: {
-    flexDirection: 'row',
-    justifyContent: 'space-around', 
-    marginBottom: 20,
-  },
-  boton: {
-    backgroundColor: '#3498db',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  textoBoton: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
   },
   botonesContainer: {
     flexDirection: "row",
     marginVertical: 8, 
-  },
-  botonAgregarCarrito: {
-    backgroundColor: "#007bff",
-    padding: 5,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 40,
-    paddingHorizontal: 10,
-    marginRight: 8,
-    maxWidth: 100, 
   },
   botonActualizar: {
     backgroundColor: "#28a745",
@@ -267,43 +231,6 @@ const styles = StyleSheet.create({
     height: 40,
     paddingHorizontal: 10,
     maxWidth: 100, 
-  },
-  botonCarrito: {
-    backgroundColor: "#007bff", 
-    padding: 5,
-    borderRadius: 10,
-    alignItems: "center",    
-    justifyContent: "center",
-  },
-  botonHistorial: {
-    backgroundColor: "#007bff",
-    padding: 10,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  textoBotonHistorial: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  scannerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  botonEscanear: {
-    backgroundColor: '#3498db',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  textoBoton: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
   },
 });
 
