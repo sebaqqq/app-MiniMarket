@@ -4,7 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { db } from "../DB/firebase";
-import { collection, getDocs,setDoc, doc } from "firebase/firestore";
+import { collection, getDocs,setDoc, doc, getDoc } from "firebase/firestore";
 import { Camera } from 'expo-camera';
 import { Audio } from 'expo-av';
 
@@ -111,8 +111,22 @@ const CrearLista = () => {
         setScanning(true);
     };
 
-    const handleBarCodeScanned = ({ data }) => {
-        handleCodigoBarrasScanned(data);
+    const handleBarCodeScanned = async ({ data }) => {
+        try {
+            const productoRef = doc(db, 'productos', data);
+            const productoSnapshot = await getDoc(productoRef);
+    
+            if (productoSnapshot.exists()) {
+                const producto = productoSnapshot.data();
+                Alert.alert('Producto encontrado', `El producto '${producto.nombreProducto}' ya existe en la base de datos.`);
+            } else {
+                handleCodigoBarrasScanned(data);
+                playSound();
+            }
+        } catch (error) {
+            console.error('Error al buscar el producto:', error);
+            Alert.alert('Error', 'Hubo un error al buscar el producto en la base de datos.');
+        }
     };
 
     if (scanning) {
