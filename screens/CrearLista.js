@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, TextInput, ScrollView, StyleSheet, Alert } from 'react-native';
+import { Text, View, Button, TextInput, ScrollView, StyleSheet, Alert, RefreshControl } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { db } from "../DB/firebase";
 import { collection, getDocs,setDoc, doc } from "firebase/firestore";
 import { Camera } from 'expo-camera';
+import { Audio } from 'expo-av';
 
 const CrearLista = () => {
     const navigation = useNavigation();
@@ -19,6 +20,7 @@ const CrearLista = () => {
     const [message, setMessage] = useState(null);
     const [categorias, setCategorias] = useState([]);
     const [scanning, setScanning] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     React.useLayoutEffect(() => {
         navigation.setOptions({ 
@@ -33,6 +35,10 @@ const CrearLista = () => {
             ),
         });
     }, [navigation]);
+
+    useEffect(() => {
+        obtenerCategorias();
+    }, []);
 
     const GuardarProducto = async () => {
         try {
@@ -66,18 +72,28 @@ const CrearLista = () => {
         }
     };
 
-    useEffect(() => {
-        obtenerCategorias();
-    }, []);
-
     const obtenerCategorias = async () => {
         try {
+            setRefreshing(true);
             const categoriasSnapshot = await getDocs(collection(db, 'categorias'));
             const categoriasData = categoriasSnapshot.docs.map(doc => doc.data().nombreCategoria);
             setCategorias(categoriasData);
+            setRefreshing(false);
         } catch (error) {
             console.error('Error al obtener las categorías:', error);
             Alert.alert('Error', 'Hubo un error al obtener las categorías.');
+            setRefreshing(false);
+        }
+    };
+
+    const playSound = async () => {
+        try {
+            const { sound } = await Audio.Sound.createAsync(
+                require('../sound/beep.mp3')
+            );
+            await sound.playAsync();
+        } catch (error) {
+            console.error('Error al reproducir el sonido:', error);
         }
     };
 
@@ -88,6 +104,7 @@ const CrearLista = () => {
 
     const handleCodigoBarrasScanned = (codigoBarras) => {
         setState(prevState => ({ ...prevState, idProducto: codigoBarras }));
+        playSound()
     };
 
     const startScanning = () => {
@@ -120,7 +137,15 @@ const CrearLista = () => {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView
+            style={styles.container}
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={obtenerCategorias}
+                />
+            }
+        >
             <View style={styles.inputContainer}>
                 <Text>ID</Text>
                 <Text>ID: {state.idProducto}</Text>
@@ -139,15 +164,17 @@ const CrearLista = () => {
             </View>
             <View style={styles.inputContainer}>
                 <Text>Seleccione la categoría</Text>
-                <Picker
-                    selectedValue={state.categoria}
-                    style={styles.input}
-                    onValueChange={(value) => handleChangeText('categoria', value)}>
-                    <Picker.Item label="Seleccione una categoría" value="" />
-                    {categorias.map((categoria, index) => (
-                        <Picker.Item key={index} label={categoria} value={categoria} />
-                    ))}
-                </Picker>
+                <ScrollView>
+                    <Picker
+                        selectedValue={state.categoria}
+                        style={styles.input}
+                        onValueChange={(value) => handleChangeText('categoria', value)}>
+                        <Picker.Item label="Seleccione una categoría" value="" />
+                        {categorias.map((categoria, index) => (
+                            <Picker.Item key={index} label={categoria} value={categoria} />
+                        ))}
+                    </Picker>
+                </ScrollView>
             </View>
             <View style={styles.inputContainer}>
                 <Text>Ingrese el precio</Text>
