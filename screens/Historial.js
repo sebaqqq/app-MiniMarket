@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native'; // Importa RefreshControl
 import { db } from "../DB/firebase";
 import { collection, getDocs } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native'; 
@@ -10,6 +10,7 @@ const Historial = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalPorFecha, setTotalPorFecha] = useState({});
+  const [refreshing, setRefreshing] = useState(false); 
 
   useEffect(() => {
     const fetchHistorial = async () => {
@@ -81,10 +82,36 @@ const Historial = () => {
     });
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const historialCollection = collection(db, 'historialVentas');
+      const historialSnapshot = await getDocs(historialCollection);
+      const historialData = historialSnapshot.docs.map(doc => {
+        const data = doc.data();
+        const totalCompra = parseFloat(data.totalCompra);
+        return {
+          id: doc.id,
+          ...data,
+          totalCompra: isNaN(totalCompra) ? 0 : totalCompra 
+        };
+      });
+      setHistorial(historialData);
+      setLoading(false);
+      calcularTotalPorFecha(historialData);
+    } catch (error) {
+      console.error("Error fetching historial:", error);
+      setError(error);
+      setLoading(false);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
   }
@@ -103,6 +130,12 @@ const Historial = () => {
         data={historial}
         renderItem={renderItem}
         keyExtractor={item => item.id}
+        refreshControl={ // Agrega refreshControl a FlatList
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        }
       />
       <View style={styles.totalContainer}>
         <Text style={styles.totalText}>Total por Día:</Text>
@@ -119,6 +152,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   itemContainer: {
     width:350,
