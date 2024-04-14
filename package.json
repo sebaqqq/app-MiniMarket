@@ -17,6 +17,7 @@
     "@react-navigation/native-stack": "^6.9.26",
     "core-js": "^3.36.1",
     "expo": "~50.0.14",
+    "expo-av": "~13.10.5",
     "expo-barcode-scanner": "~12.9.3",
     "expo-camera": "^14.1.2",
     "expo-image-picker": "^14.7.1",
@@ -28,7 +29,7 @@
     "react-native-camera": "^4.2.1",
     "react-native-gesture-handler": "^2.16.0",
     "react-native-picker-select": "^9.1.3",
-    "expo-av": "~13.10.5"
+    "react-native-reanimated": "^3.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
