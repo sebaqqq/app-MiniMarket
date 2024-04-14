@@ -130,7 +130,7 @@ const Historial = () => {
         data={historial}
         renderItem={renderItem}
         keyExtractor={item => item.id}
-        refreshControl={ // Agrega refreshControl a FlatList
+        refreshControl={ 
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
