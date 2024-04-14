@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
 import React from 'react';
+import { View } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -107,7 +108,7 @@ export default function Navigation () {
           name="Añadir Producto" 
           component={CrearLista}
           options={{
-            tabBarLabel: 'Añadir Producto',
+            tabBarLabel: 'Añadir',
             tabBarIcon: ({ color, size }) => (
               <Entypo name="add-to-list" size={size} color={color} />
             ),
@@ -117,9 +118,19 @@ export default function Navigation () {
           name="Codigo de Barras" 
           component={EscanerCodigoBarras}
           options={{
-            tabBarLabel: 'Codigo de Barras',
+            tabBarLabel: '',
             tabBarIcon: ({ color, size }) => (
-              <AntDesign name="barcode" size={size} color={color} />
+              <View style={{
+                width: 60,
+                height: 60,
+                borderRadius: 30,
+                backgroundColor: '#0077B6',
+                justifyContent: 'center',
+                alignItems: 'center',
+                top: -10, 
+              }}>
+                <AntDesign name="barcode" size={size} color={'#FFFFFF'} />
+              </View>
             ),
           }}
         />
