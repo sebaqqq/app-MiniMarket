@@ -86,24 +86,29 @@ const EscanerCodigoBarras = () => {
         });
         setCarrito(nuevoCarrito);
     };
-
+ 
     const finalizarCompra = async () => {
+        if (carrito.length === 0) {
+            Alert.alert('Carrito vacío', 'Agrega al menos un producto al carrito antes de finalizar la compra.');
+            return;
+        }
+    
         try {
             await addDoc(collection(db, 'historialVentas'), {
                 carrito,
                 totalCompra,
-                fecha: new Date().toISOString(), 
+                fecha: new Date().toISOString(),
             });
     
             setCarrito([]);
             setTotalCompra(0);
     
-            Alert.alert('Compra finalizada', 'El historial de ventas ha sido actualizado correctamente.');
+            Alert.alert('Compra finalizada');
         } catch (error) {
             console.error('Error al finalizar la compra:', error);
             Alert.alert('Error al finalizar la compra', 'Por favor, inténtalo de nuevo más tarde.');
         }
-    };    
+    };
 
     const toggleCamera = () => {
         setCameraActive(!cameraActive);
