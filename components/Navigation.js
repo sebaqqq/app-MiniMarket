@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { View, Animated, TouchableWithoutFeedback } from 'react-native';
+import { View, Animated, TouchableWithoutFeedback, Vibration } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -170,6 +170,29 @@ function MyTabBar({ state, descriptors, navigation }) {
     };
   }, [state.index, translateValue]);
 
+  const onTabPress = (route, isFocused) => {
+    Vibration.vibrate(50); 
+
+    const event = navigation.emit({
+      type: 'tabPress',
+      target: route.key,
+      canPreventDefault: true,
+    });
+
+    if (!isFocused && !event.defaultPrevented) {
+      navigation.navigate(route.name);
+    }
+  };
+
+  const onTabLongPress = (route) => {
+    Vibration.vibrate(50); 
+
+    navigation.emit({
+      type: 'tabLongPress',
+      target: route.key,
+    });
+  };
+
   return (
     <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#999', backgroundColor: '#f5f5f5', height: 50 }}>
       {state.routes.map((route, index) => {
@@ -177,30 +200,11 @@ function MyTabBar({ state, descriptors, navigation }) {
         const label = options.tabBarLabel !== undefined ? options.tabBarLabel : options.title !== undefined ? options.title : route.name;
         const isFocused = state.index === index;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
-
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          });
-        };
-
         return (
           <TouchableWithoutFeedback
             key={index}
-            onPress={onPress}
-            onLongPress={onLongPress}
+            onPress={() => onTabPress(route, isFocused)}
+            onLongPress={() => onTabLongPress(route)}
             accessibilityRole='button'
             accessibilityStates={isFocused ? ['selected'] : []}
             accessibilityLabel={options.tabBarAccessibilityLabel}

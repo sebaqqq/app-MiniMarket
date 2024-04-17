@@ -21,6 +21,8 @@ const CrearLista = () => {
     const [categorias, setCategorias] = useState([]);
     const [scanning, setScanning] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [productosEscaneados, setProductosEscaneados] = useState([]);
+    const [mostrarAlerta, setMostrarAlerta] = useState(true);
 
     React.useLayoutEffect(() => {
         navigation.setOptions({ 
@@ -113,15 +115,24 @@ const CrearLista = () => {
 
     const handleBarCodeScanned = async ({ data }) => {
         try {
+            if (productosEscaneados.includes(data)) {
+                return;
+            }
+    
             const productoRef = doc(db, 'productos', data);
             const productoSnapshot = await getDoc(productoRef);
     
             if (productoSnapshot.exists()) {
                 const producto = productoSnapshot.data();
-                Alert.alert('Producto encontrado', `El producto '${producto.nombreProducto}' ya existe en la base de datos.`);
+                if (mostrarAlerta) {
+                    Alert.alert('Producto encontrado', `El producto '${producto.nombreProducto}' ya existe en la base de datos.`);
+                    setMostrarAlerta(false);
+                }
             } else {
                 handleCodigoBarrasScanned(data);
                 playSound();
+                setProductosEscaneados([...productosEscaneados, data]);
+                setMostrarAlerta(true);
             }
         } catch (error) {
             console.error('Error al buscar el producto:', error);
