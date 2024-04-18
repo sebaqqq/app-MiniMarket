@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native'; // Importa RefreshControl
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Button } from 'react-native';
 import { db } from "../DB/firebase";
 import { collection, getDocs } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native'; 
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const Historial = () => {
   const navigation = useNavigation();
-  const [historial, setHistorial] = useState([]);
+  const [historialCompleto, setHistorialCompleto] = useState([]);
+  const [historialFiltrado, setHistorialFiltrado] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalPorFecha, setTotalPorFecha] = useState({});
-  const [refreshing, setRefreshing] = useState(false); 
+  const [totalPorMes, setTotalPorMes] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedMonth, setSelectedMonth] = useState('');
 
   useEffect(() => {
     const fetchHistorial = async () => {
@@ -26,9 +32,10 @@ const Historial = () => {
             totalCompra: isNaN(totalCompra) ? 0 : totalCompra 
           };
         });
-        setHistorial(historialData);
+        setHistorialCompleto(historialData);
         setLoading(false);
         calcularTotalPorFecha(historialData);
+        calcularTotalPorMes(historialData);
       } catch (error) {
         console.error("Error fetching historial:", error);
         setError(error);
@@ -44,21 +51,45 @@ const Historial = () => {
     return () => clearInterval(reiniciarTotales);
   }, []);
 
+  useEffect(() => {
+    filtrarHistorialPorFecha(selectedDate);
+  }, [selectedDate]);
+
   const calcularTotalPorFecha = (historialData) => {
     const totalPorFecha = {};
-    const fechaActual = new Date().toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
     historialData.forEach(item => {
       const fecha = formatFecha(item.fecha);
-      if (fecha === fechaActual) {
+      if (fecha === formatFecha(selectedDate)) { // Utiliza la fecha seleccionada
         const totalCompra = parseFloat(item.totalCompra);
         totalPorFecha[fecha] = (totalPorFecha[fecha] || 0) + totalCompra;
       }
     });
     setTotalPorFecha(totalPorFecha);
+    // Actualizar total por mes
+    calcularTotalPorMes(historialData);
+  };
+
+  const calcularTotalPorMes = (historialData) => {
+    const totalPorMes = {};
+    historialData.forEach(item => {
+      const fecha = new Date(item.fecha);
+      const yearMonth = fecha.getFullYear() + '-' + (fecha.getMonth() + 1);
+      if (!totalPorMes[yearMonth]) {
+        totalPorMes[yearMonth] = 0;
+      }
+      totalPorMes[yearMonth] += parseFloat(item.totalCompra);
+    });
+    setTotalPorMes(totalPorMes);
+  };
+
+  const filtrarHistorialPorFecha = (fecha) => {
+    const fechaSeleccionada = formatFecha(fecha);
+    const filteredHistorial = historialCompleto.filter(item => {
+      const fechaItem = formatFecha(item.fecha);
+      return fechaItem === fechaSeleccionada;
+    });
+    setHistorialFiltrado(filteredHistorial);
+    calcularTotalPorFecha(filteredHistorial);
   };
 
   const renderItem = ({ item }) => (
@@ -96,9 +127,10 @@ const Historial = () => {
           totalCompra: isNaN(totalCompra) ? 0 : totalCompra 
         };
       });
-      setHistorial(historialData);
+      setHistorialCompleto(historialData);
       setLoading(false);
       calcularTotalPorFecha(historialData);
+      calcularTotalPorMes(historialData);
     } catch (error) {
       console.error("Error fetching historial:", error);
       setError(error);
@@ -108,26 +140,16 @@ const Historial = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text>Error: {error.message}</Text>
-      </View>
-    );
-  }
+  const handleDateSelected = (date) => {
+    setSelectedDate(date);
+    setShowDatePicker(false);
+  };
 
   return (
     <View style={styles.container}>
+      <Button title="Seleccionar Fecha" onPress={() => setShowDatePicker(true)} />
       <FlatList
-        data={historial}
+        data={historialFiltrado}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         refreshControl={ 
@@ -143,6 +165,19 @@ const Historial = () => {
           <Text key={fecha}>{fecha}: {totalPorFecha[fecha]}</Text>
         ))}
       </View>
+      <View style={styles.totalContainer}>
+        <Text style={styles.totalText}>Total por Mes:</Text>
+        {Object.keys(totalPorMes).map(yearMonth => (
+          <Text key={yearMonth}>{yearMonth}: {totalPorMes[yearMonth]}</Text>
+        ))}
+      </View>
+      <DateTimePickerModal
+        isVisible={showDatePicker}
+        mode="date"
+        date={selectedDate}
+        onConfirm={handleDateSelected}
+        onCancel={() => setShowDatePicker(false)}
+      />
     </View>
   );
 };
@@ -152,11 +187,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   itemContainer: {
     width:350,

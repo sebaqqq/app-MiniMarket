@@ -116,13 +116,12 @@ export default function Navigation() {
             tabBarLabel: '',
             tabBarIcon: ({ color, size }) => (
               <View style={{
-                width: 60,
-                height: 60,
-                borderRadius: 30,
+                width: 40,
+                height: 40,
+                borderRadius: 5,
                 backgroundColor: '#0077B6',
                 justifyContent: 'center',
                 alignItems: 'center',
-                top: -11,
               }}>
                 <AntDesign name='barcode' size={size} color={'#FFFFFF'} />
               </View>
