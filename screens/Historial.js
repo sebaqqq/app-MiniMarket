@@ -16,7 +16,6 @@ const Historial = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedMonth, setSelectedMonth] = useState('');
 
   useEffect(() => {
     const fetchHistorial = async () => {
@@ -59,13 +58,13 @@ const Historial = () => {
     const totalPorFecha = {};
     historialData.forEach(item => {
       const fecha = formatFecha(item.fecha);
-      if (fecha === formatFecha(selectedDate)) { // Utiliza la fecha seleccionada
+      if (fecha === formatFecha(selectedDate)) { 
         const totalCompra = parseFloat(item.totalCompra);
         totalPorFecha[fecha] = (totalPorFecha[fecha] || 0) + totalCompra;
       }
     });
     setTotalPorFecha(totalPorFecha);
-    // Actualizar total por mes
+
     calcularTotalPorMes(historialData);
   };
 
@@ -97,8 +96,8 @@ const Historial = () => {
       navigation.navigate('DetallesCarrito', { carritoId: item.id });
     }}>
       <View style={styles.itemContainer}>
-        <Text>ID: {item.id}</Text>
-        <Text>Fecha: {formatFecha(item.fecha)}</Text>
+        <Text>ID Compra: {item.id}</Text>
+        <Text>Fecha Compra: {formatFecha(item.fecha)}</Text>
         <Text>Total Compra: {item.totalCompra}</Text>
       </View>
     </TouchableOpacity>
