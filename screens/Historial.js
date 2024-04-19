@@ -96,7 +96,7 @@ const Historial = () => {
       navigation.navigate('DetallesCarrito', { carritoId: item.id });
     }}>
       <View style={styles.itemContainer}>
-        <Text>ID Compra: {item.id}</Text>
+        <Text>Vendedor: {item.usuario?.firstName}</Text> 
         <Text>Fecha Compra: {formatFecha(item.fecha)}</Text>
         <Text>Total Compra: {item.totalCompra}</Text>
       </View>
