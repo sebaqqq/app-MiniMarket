@@ -143,14 +143,13 @@ const EscanerCodigoBarras = () => {
 
     const toggleCamera = () => {
         setCameraActive(prevState => !prevState); // Cambiar el estado de la cámara sin desactivarla
+        setReloadKey(prevKey => prevKey + 1); // Incrementar la clave para forzar la recarga de la cámara
     };
-
-
-
+    
     const reloadCamera = () => {
-        setScanning(true);
-        setRefreshing(true); // Activa el indicador de actualización
-        setReloadKey(prevKey => prevKey + 1); // Incrementa la clave para forzar la recarga de la cámara
+        setScanning(true); // Volver a habilitar el escaneo
+        setRefreshing(true); // Activar el indicador de actualización
+        setReloadKey(prevKey => prevKey + 1); // Incrementar la clave para forzar la recarga de la cámara
     };
     
 
@@ -181,11 +180,12 @@ const EscanerCodigoBarras = () => {
             >
                 <View style={styles.cameraContainer}>
                     <Camera
+                        key={reloadKey} // Utilizar reloadKey como clave para forzar el remontaje
                         style={[StyleSheet.absoluteFillObject, styles.camera]}
                         onBarCodeScanned={handleBarCodeScanned}
                         type={Camera.Constants.Type.back}
                         autoFocus={Camera.Constants.AutoFocus.on}
-                        flashMode={Camera.Constants.FlashMode.off}
+                        flashMode={Camera.Constants.FlashMode.on}
                         ratio="3:3"
                         ref={cameraRef}
                     />
@@ -194,9 +194,16 @@ const EscanerCodigoBarras = () => {
                         <View style={styles.scannerRect}></View>
                     </View>
 
-                    <TouchableOpacity style={styles.actualizarButton} onPress={onRefresh}>
-                        <Text style={styles.buttonText}>Actualizar Cámara</Text>
-                    </TouchableOpacity>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.actualizarButton} onPress={onRefresh}>
+                            <Text style={styles.buttonText}>Actualizar Cámara</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.actualizarButton} onPress={toggleCamera}>
+                            <Text style={styles.buttonText}>Encender Cámara</Text>
+                        </TouchableOpacity>
+                    </View>
+
 
                 </View>
     
@@ -253,6 +260,14 @@ const styles = StyleSheet.create({
         position: 'relative',
         borderRadius: 100,
     },
+
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '95%',
+        marginBottom: '2%',
+    },
+    
     scannerContainer: {
         flex: 1,
         alignItems: 'center',
