@@ -31,7 +31,7 @@ const CreateAccount = () => {
 
   return (
     <View style={styles.container}>
-      <Text>Crear Cuenta</Text>
+      <Text style={styles.title}>Crear Cuenta</Text>
       <TextInput
         style={styles.input}
         placeholder="Nombre"
@@ -63,7 +63,7 @@ const CreateAccount = () => {
         value={password}
         onChangeText={setPassword}
       />
-      <Button title="Crear Cuenta" onPress={handleCreateAccount} />
+      <Button style={styles.button} title="Crear Cuenta" onPress={handleCreateAccount} />
     </View>
   );
 }
@@ -73,14 +73,36 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f8f8f8',
+    paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
   input: {
     height: 40,
-    width: '80%',
-    borderColor: 'gray',
+    width: '100%',
+    borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: 10,
+    borderRadius: 20,
     paddingHorizontal: 10,
+    marginBottom: 10,
+    backgroundColor: '#fff',
+  },
+  button: {
+    width: '100%',
+    height: 40,
+    backgroundColor: '#007bff',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

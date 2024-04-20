@@ -56,10 +56,10 @@ const Login = () => {
       >
         <View style={LoginStyles.centeredContainer}>
           <Text style={LoginStyles.title}>MONTINO</Text>
-          {/* <Image
+          <Image
             source={require("../images/montinoLogo-sinFondo.png")}
             style={LoginStyles.logoImage}
-          /> */}
+          />
           <Text style={LoginStyles.headerText}>Iniciar Sesión</Text>
           <View style={LoginStyles.inputContainer}>
             <View style={LoginStyles.inputWrapper}>

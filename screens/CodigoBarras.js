@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect} from "react";
 import { Text, TouchableOpacity, View, Button, StyleSheet, Alert, ScrollView, Dimensions, RefreshControl } from 'react-native';
 import { Camera } from 'expo-camera';
 import { Audio } from 'expo-av';
@@ -10,11 +10,11 @@ const EscanerCodigoBarras = () => {
     const [hasPermission, setHasPermission] = useState(null);
     const [carrito, setCarrito] = useState([]);
     const [totalCompra, setTotalCompra] = useState(0);
-    const [cameraActive, setCameraActive] = useState(true); // Estado para controlar si la cámara está activa o no
-    const [cameraRef, setCameraRef] = useState(null); // Referencia a la cámara
-    const [reloadKey, setReloadKey] = useState(0); // Clave para forzar la recarga de la cámara
-    const [scanning, setScanning] = useState(true); // Estado para controlar si se está escaneando un producto
-    const [refreshing, setRefreshing] = useState(false); // Estado para controlar si se está refrescando la cámara
+    const [cameraActive, setCameraActive] = useState(true); 
+    const [cameraRef, setCameraRef] = useState(null); 
+    const [reloadKey, setReloadKey] = useState(0); 
+    const [scanning, setScanning] = useState(true); 
+    const [refreshing, setRefreshing] = useState(false); 
 
     useEffect(() => {
         (async () => {
@@ -79,7 +79,6 @@ const EscanerCodigoBarras = () => {
         }
     };
 
-    
     const removeFromCart = (productId) => {
         setCarrito(carrito.filter(item => item.idProducto !== productId));
     };
@@ -93,8 +92,6 @@ const EscanerCodigoBarras = () => {
         });
         setCarrito(nuevoCarrito);
     };
-
-
 
     const finalizarCompra = async () => {
         if (carrito.length === 0) {
@@ -138,25 +135,21 @@ const EscanerCodigoBarras = () => {
         }
     };
 
-
-
-
     const toggleCamera = () => {
-        setCameraActive(prevState => !prevState); // Cambiar el estado de la cámara sin desactivarla
-        setReloadKey(prevKey => prevKey + 1); // Incrementar la clave para forzar la recarga de la cámara
+        setCameraActive(prevState => !prevState); 
+        setReloadKey(prevKey => prevKey + 1);
     };
     
     const reloadCamera = () => {
-        setScanning(true); // Volver a habilitar el escaneo
-        setRefreshing(true); // Activar el indicador de actualización
-        setReloadKey(prevKey => prevKey + 1); // Incrementar la clave para forzar la recarga de la cámara
+        setScanning(true); 
+        setRefreshing(true); 
+        setReloadKey(prevKey => prevKey + 1); 
     };
     
-
     const onRefresh = () => {
         reloadCamera();
         setTimeout(() => {
-            setRefreshing(false); // Desactiva el indicador de actualización después de un breve retraso
+            setRefreshing(false); 
         }, 1000);
     };
 
@@ -166,7 +159,6 @@ const EscanerCodigoBarras = () => {
     if (hasPermission === false) {
         return <Text>Permiso de la cámara no concedido</Text>;
     }
-
 
     return (
         <View style={styles.container}>
@@ -180,7 +172,7 @@ const EscanerCodigoBarras = () => {
             >
                 <View style={styles.cameraContainer}>
                     <Camera
-                        key={reloadKey} // Utilizar reloadKey como clave para forzar el remontaje
+                        key={reloadKey} 
                         style={[StyleSheet.absoluteFillObject, styles.camera]}
                         onBarCodeScanned={handleBarCodeScanned}
                         type={Camera.Constants.Type.back}
@@ -189,11 +181,9 @@ const EscanerCodigoBarras = () => {
                         ratio="3:3"
                         ref={cameraRef}
                     />
-
                     <View style={styles.scannerContainer}>
                         <View style={styles.scannerRect}></View>
                     </View>
-
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.actualizarButton} onPress={onRefresh}>
                             <Text style={styles.buttonText}>Actualizar Cámara</Text>
@@ -203,10 +193,7 @@ const EscanerCodigoBarras = () => {
                             <Text style={styles.buttonText}>Encender Cámara</Text>
                         </TouchableOpacity>
                     </View>
-
-
                 </View>
-    
                 <ScrollView style={styles.carritoContainer}>
                     {carrito.map((producto) => (
                         <View key={producto.idProducto} style={styles.producto}>
@@ -237,12 +224,11 @@ const EscanerCodigoBarras = () => {
     
 }
 
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center', // Centra horizontalmente en el contenedor principal
+        alignItems: 'center', 
     },
     scrollViewContent: {
         flexGrow: 1,
@@ -254,27 +240,25 @@ const styles = StyleSheet.create({
     },
     cameraContainer: {
         aspectRatio: 4/3,
-        width: '98%', // Ocupa todo el ancho disponible
-        justifyContent: 'center', // Centra verticalmente en el contenedor de la cámara
-        alignItems: 'center', // Centra horizontalmente en el contenedor de la cámara
+        width: '98%', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
         position: 'relative',
         borderRadius: 100,
     },
-
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '95%',
         marginBottom: '2%',
     },
-    
     scannerContainer: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },
     scannerRect: {
-        width: Dimensions.get('window').width * 0.4, // Por ejemplo, el 90% del ancho de la ventana
+        width: Dimensions.get('window').width * 0.4, 
         height: '25%',
         borderWidth: 3,
         borderColor: 'yellow',
@@ -282,22 +266,20 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     actualizarButton: {
-        backgroundColor: '#EDEDED', // Color de fondo del botón
-        paddingHorizontal: 20, // Espaciado horizontal interno
-        paddingVertical: 10, // Espaciado vertical interno
+        backgroundColor: '#EDEDED', 
+        paddingHorizontal: 20, 
+        paddingVertical: 10, 
         marginBottom:'2%',
-        borderRadius: 5, // Bordes redondeados
+        borderRadius: 5, 
         opacity:0.7,
     },
     buttonText: {
-        color: 'white', // Color del texto del botón
-        textAlign: 'center', // Alineación del texto al centro
-        fontWeight: 'bold', // Fuente en negrita
+        color: 'white', 
+        textAlign: 'center', 
+        fontWeight: 'bold', 
     },
-    
-    
     carritoContainer: {
-        width: '100%', // Ocupa todo el ancho disponible
+        width: '100%', 
         marginVertical: 5,
     },
     producto: {
@@ -327,11 +309,11 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: 5,
         marginRight: 8,
-        paddingHorizontal: 5, // Ajustar el ancho del botón
-        alignItems: 'center', // Centrar horizontalmente el contenido
+        paddingHorizontal: 5, 
+        alignItems: 'center', 
     },
     totalContainer: {
-        width: '100%', // Ocupa todo el ancho disponible
+        width: '100%',
         borderTopWidth: 1,
         borderTopColor: '#ccc',
         padding: 10,

@@ -4,8 +4,8 @@ export const LoginStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    justifyContent: "center",
     paddingHorizontal: 20,
+    justifyContent: "center",
   },
   scrollViewContainer: {
     flexGrow: 1,
@@ -21,14 +21,14 @@ export const LoginStyles = StyleSheet.create({
     color: "#0077B6",
   },
   logoImage: {
-    width: 300,
-    height: 57,
-    marginBottom: 40,
+    width: 180,
+    height: 200,
+    marginBottom: 20,
   },
   headerText: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 40,
+    marginBottom: 20,
     color: "#0077B6",
   },
   inputContainer: {
@@ -37,25 +37,22 @@ export const LoginStyles = StyleSheet.create({
   },
   inputWrapper: {
     position: "relative",
-    marginBottom: 30,
+    marginBottom: 20,
   },
   icon: {
     position: "absolute",
     left: 8,
     top: 12,
-    zIndex: 1,
   },
   labelContainer: {
     position: "absolute",
     top: 0,
     left: 4,
-    zIndex: 1,
   },
   labelText: {
     fontSize: 14,
   },
   input: {
-    marginBottom:30,
     borderBottomWidth: 1,
     borderBottomColor: "#000",
     paddingVertical: 8,
@@ -83,6 +80,10 @@ export const LoginStyles = StyleSheet.create({
     position: "absolute",
     right: 8, 
     top: 12,
-    zIndex: 1,
+  },
+  forgotPasswordText: {
+    color: "#0077B6",
+    marginTop: 10,
+    fontSize: 12,
   },
 });

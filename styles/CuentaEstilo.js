@@ -66,7 +66,7 @@ export const CuentaStyles = StyleSheet.create({
   },
   logoImage: {
     width: 180,
-    height: 180,
+    height: 200,
     marginBottom: 7,
     alignSelf: 'center',
   },

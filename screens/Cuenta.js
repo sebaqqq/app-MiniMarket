@@ -70,10 +70,10 @@ function Perfil() {
       ) : (
         <View style={CuentaStyles.profile}>
           <Text style={CuentaStyles.subtitle}>Credencial de Usuario</Text>
-          {/* <Image
-            source={require("../images/AutoSinFondo.png")}
+          <Image
+            source={require("../images/montinoLogo-sinFondo.png")}
             style={CuentaStyles.logoImage}
-          /> */}
+          />
           {renderProfileInfo("user", `${user.firstName} ${user.lastName}`)}
           {renderProfileInfo("envelope-o", user.email)}
         </View>
