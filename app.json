@@ -33,7 +33,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/montino-sinFondo.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
@@ -44,7 +44,7 @@
       "package": "com.sebaquintana.appminiMarket"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/montino-sinFondo.png"
     },
     "extra": {
       "eas": {
