@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Button } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+} from "react-native";
 import { db } from "../DB/firebase";
-import { collection, getDocs } from 'firebase/firestore';
-import { useNavigation } from '@react-navigation/native'; 
+import { collection, getDocs } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const Historial = () => {
@@ -20,15 +27,15 @@ const Historial = () => {
   useEffect(() => {
     const fetchHistorial = async () => {
       try {
-        const historialCollection = collection(db, 'historialVentas');
+        const historialCollection = collection(db, "historialVentas");
         const historialSnapshot = await getDocs(historialCollection);
-        const historialData = historialSnapshot.docs.map(doc => {
+        const historialData = historialSnapshot.docs.map((doc) => {
           const data = doc.data();
           const totalCompra = parseFloat(data.totalCompra);
           return {
             id: doc.id,
             ...data,
-            totalCompra: isNaN(totalCompra) ? 0 : totalCompra 
+            totalCompra: isNaN(totalCompra) ? 0 : totalCompra,
           };
         });
         setHistorialCompleto(historialData);
@@ -45,7 +52,7 @@ const Historial = () => {
 
     const reiniciarTotales = setInterval(() => {
       setTotalPorFecha({});
-    }, 24 * 60 * 60 * 1000); 
+    }, 24 * 60 * 60 * 1000);
 
     return () => clearInterval(reiniciarTotales);
   }, []);
@@ -56,9 +63,9 @@ const Historial = () => {
 
   const calcularTotalPorFecha = (historialData) => {
     const totalPorFecha = {};
-    historialData.forEach(item => {
+    historialData.forEach((item) => {
       const fecha = formatFecha(item.fecha);
-      if (fecha === formatFecha(selectedDate)) { 
+      if (fecha === formatFecha(selectedDate)) {
         const totalCompra = parseFloat(item.totalCompra);
         totalPorFecha[fecha] = (totalPorFecha[fecha] || 0) + totalCompra;
       }
@@ -70,9 +77,9 @@ const Historial = () => {
 
   const calcularTotalPorMes = (historialData) => {
     const totalPorMes = {};
-    historialData.forEach(item => {
+    historialData.forEach((item) => {
       const fecha = new Date(item.fecha);
-      const yearMonth = fecha.getFullYear() + '-' + (fecha.getMonth() + 1);
+      const yearMonth = fecha.getFullYear() + "-" + (fecha.getMonth() + 1);
       if (!totalPorMes[yearMonth]) {
         totalPorMes[yearMonth] = 0;
       }
@@ -83,7 +90,7 @@ const Historial = () => {
 
   const filtrarHistorialPorFecha = (fecha) => {
     const fechaSeleccionada = formatFecha(fecha);
-    const filteredHistorial = historialCompleto.filter(item => {
+    const filteredHistorial = historialCompleto.filter((item) => {
       const fechaItem = formatFecha(item.fecha);
       return fechaItem === fechaSeleccionada;
     });
@@ -92,11 +99,13 @@ const Historial = () => {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => {
-      navigation.navigate('DetallesCarrito', { carritoId: item.id });
-    }}>
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate("DetallesCarrito", { carritoId: item.id });
+      }}
+    >
       <View style={styles.itemContainer}>
-        <Text>Vendedor: {item.usuario?.firstName}</Text> 
+        <Text>Vendedor: {item.usuario?.firstName}</Text>
         <Text>Fecha Compra: {formatFecha(item.fecha)}</Text>
         <Text>Total Compra: {item.totalCompra}</Text>
       </View>
@@ -105,25 +114,25 @@ const Historial = () => {
 
   const formatFecha = (fecha) => {
     const fechaObj = new Date(fecha);
-    return fechaObj.toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
+    return fechaObj.toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     });
   };
 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      const historialCollection = collection(db, 'historialVentas');
+      const historialCollection = collection(db, "historialVentas");
       const historialSnapshot = await getDocs(historialCollection);
-      const historialData = historialSnapshot.docs.map(doc => {
+      const historialData = historialSnapshot.docs.map((doc) => {
         const data = doc.data();
         const totalCompra = parseFloat(data.totalCompra);
         return {
           id: doc.id,
           ...data,
-          totalCompra: isNaN(totalCompra) ? 0 : totalCompra 
+          totalCompra: isNaN(totalCompra) ? 0 : totalCompra,
         };
       });
       setHistorialCompleto(historialData);
@@ -146,28 +155,34 @@ const Historial = () => {
 
   return (
     <View style={styles.container}>
-      <Button title="Seleccionar Fecha" onPress={() => setShowDatePicker(true)} />
+      <TouchableOpacity
+        onPress={() => setShowDatePicker(true)}
+        style={styles.boton}
+      >
+        <Text style={styles.botonText}>Selecionar Fecha</Text>
+      </TouchableOpacity>
       <FlatList
         data={historialFiltrado}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
-        refreshControl={ 
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-          />
+        keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       />
       <View style={styles.totalContainer}>
         <Text style={styles.totalText}>Total por Día:</Text>
-        {Object.keys(totalPorFecha).map(fecha => (
-          <Text key={fecha}>{fecha}: {totalPorFecha[fecha]}</Text>
+        {Object.keys(totalPorFecha).map((fecha) => (
+          <Text key={fecha}>
+            {fecha}: {totalPorFecha[fecha]}
+          </Text>
         ))}
       </View>
       <View style={styles.totalContainer}>
         <Text style={styles.totalText}>Total por Mes:</Text>
-        {Object.keys(totalPorMes).map(yearMonth => (
-          <Text key={yearMonth}>{yearMonth}: {totalPorMes[yearMonth]}</Text>
+        {Object.keys(totalPorMes).map((yearMonth) => (
+          <Text key={yearMonth}>
+            {yearMonth}: {totalPorMes[yearMonth]}
+          </Text>
         ))}
       </View>
       <DateTimePickerModal
@@ -184,25 +199,36 @@ const Historial = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   itemContainer: {
-    width:350,
+    width: 350,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 10,
     margin: 5,
     borderRadius: 5,
   },
+  boton: {
+    backgroundColor: "#1C2120",
+    padding: 10,
+    borderRadius: 8,
+    width: "70%",
+    alignItems: "center",
+  },
+  botonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
   totalContainer: {
     marginTop: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   totalText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 15,
-  }
+  },
 });
 
 export default Historial;

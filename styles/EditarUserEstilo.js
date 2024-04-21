@@ -1,10 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const EditarUserStyles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 16,
   },
   textTitle: {
@@ -35,8 +35,8 @@ export const EditarUserStyles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     marginTop: 10,
@@ -44,7 +44,7 @@ export const EditarUserStyles = StyleSheet.create({
     color: "#333333",
   },
   boton: {
-    backgroundColor: "#0077B6",
+    backgroundColor: "#1C2120",
     padding: 10,
     borderRadius: 8,
     width: "100%",

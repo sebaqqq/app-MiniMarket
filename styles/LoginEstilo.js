@@ -39,16 +39,12 @@ export const LoginStyles = StyleSheet.create({
     marginBottom: 50,
     color: "#1C2120",
   },
-
-
   headerTextrecuperar: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 50,
     color: "#1C2120",
   },
-
-
   inputContainer: {
     width: "80%",
     marginBottom: 20,
@@ -81,7 +77,6 @@ export const LoginStyles = StyleSheet.create({
     color: "#333",
     borderRadius: 10,
   },
-
   inputRecupear: {
     width: "80%",
     backgroundColor: "#D4D4D4",
@@ -89,12 +84,10 @@ export const LoginStyles = StyleSheet.create({
     borderBottomColor: "#000",
     paddingVertical: 8,
     paddingLeft: 40,
-    marginBottom:20,
+    marginBottom: 20,
     color: "#333",
     borderRadius: 10,
   },
-
-
   errorText: {
     color: "red",
     marginBottom: 10,
@@ -112,7 +105,6 @@ export const LoginStyles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
   },
-
   showPasswordButton: {
     position: "absolute",
     right: 8,
@@ -123,19 +115,17 @@ export const LoginStyles = StyleSheet.create({
     marginTop: 10,
     fontSize: 12,
   },
-
   final: {
     flexDirection: "row",
     alignItems: "flex-end",
     width: "100%",
   },
-
   logoImagefinal: {
     width: 150,
     height: 150,
     marginLeft: "-22%",
     marginRight: "-20%",
     marginTop: "-20%",
-    marginBottom: "-5%", // Ajusta este valor según sea necesario
+    marginBottom: "-5%",
   },
 });

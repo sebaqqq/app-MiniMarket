@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   RefreshControl,
+  TouchableOpacity,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
@@ -139,13 +140,11 @@ const CrearLista = () => {
         return;
       }
 
-      // Realizas una consulta a la base de datos para obtener el nombre del producto asociado al ID
       const productoRef = doc(db, "productos", data);
       const productoSnapshot = await getDoc(productoRef);
 
       if (productoSnapshot.exists()) {
         const producto = productoSnapshot.data();
-        // Obtenemos el nombre del producto del documento
         const nombreProducto = producto.nombreProducto;
         if (mostrarAlerta) {
           Alert.alert(
@@ -198,12 +197,12 @@ const CrearLista = () => {
       }
     >
       <View style={styles.inputContainer}>
-        <Text>ID</Text>
         <Text>ID: {state.idProducto}</Text>
       </View>
-
-      <View style={styles.inputContainer}>
-        <Button title="Escanear código de barras" onPress={startScanning} />
+      <View>
+        <TouchableOpacity onPress={startScanning} style={styles.boton}>
+          <Text style={styles.botonText}>Escanear código de barras</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.inputContainer}>
         <Text>Ingrese el nombre del producto</Text>
@@ -249,8 +248,10 @@ const CrearLista = () => {
           onChangeText={(value) => handleChangeText("precioOferta", value)}
         />
       </View>
-      <View style={styles.buttonContainer}>
-        <Button title="Guardar producto" onPress={GuardarProducto} />
+      <View>
+        <TouchableOpacity onPress={GuardarProducto} style={styles.boton}>
+          <Text style={styles.botonText}>Guardar Producto</Text>
+        </TouchableOpacity>
       </View>
       {message && <Text style={styles.message}>{message}</Text>}
     </ScrollView>
@@ -274,15 +275,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
   },
-  buttonContainer: {
-    marginTop: 16,
-    backgroundColor: "#0077B6",
-    borderRadius: 4,
+  // buttonContainer: {
+  //   marginTop: 16,
+  //   backgroundColor: "#1C2120",
+  //   borderRadius: 4,
+  // },
+  boton: {
+    backgroundColor: "#1C2120",
+    padding: 10,
+    borderRadius: 8,
+    width: "100%",
+    alignItems: "center",
   },
-  button: {
+  botonText: {
     color: "#fff",
-    textAlign: "center",
-    paddingVertical: 10,
+    fontWeight: "bold",
   },
   cameraContainer: {
     aspectRatio: 4 / 3,

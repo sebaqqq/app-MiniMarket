@@ -91,7 +91,14 @@ const DetallesCarrito = ({ route }) => {
                 <Text style={styles.tableCell}>Nombre Producto</Text>
               </View>
               {carrito.productos.map((producto, index) => (
-                <View style={styles.tableRow} key={index}>
+                <View
+                  style={[
+                    styles.tableRow,
+                    index === carrito.productos.length - 1 &&
+                      styles.lastTableRow,
+                  ]}
+                  key={index}
+                >
                   <Text style={styles.tableCell}>{producto.idProducto}</Text>
                   <Text style={styles.tableCell}>{producto.cantidad}</Text>
                   <Text style={styles.tableCell}>
@@ -140,18 +147,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     paddingHorizontal: 10,
     paddingVertical: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
   tableRow: {
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
     paddingHorizontal: 10,
     paddingVertical: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
   tableCell: {
-    borderWidth: 0.5,
     flex: 1,
-    textAlign: "justify",
+    borderRightWidth: 1,
+    borderRightColor: "#ccc",
+    textAlign: "center",
+    padding: 8,
+  },
+  lastTableRow: {
+    borderBottomWidth: 0,
   },
 });
 
