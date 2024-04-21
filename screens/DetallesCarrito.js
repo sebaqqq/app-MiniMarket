@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { db } from "../DB/firebase";
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from "firebase/firestore";
 
 const DetallesCarrito = ({ route }) => {
   const { carritoId } = route.params;
@@ -12,13 +12,13 @@ const DetallesCarrito = ({ route }) => {
   useEffect(() => {
     const fetchCarrito = async () => {
       try {
-        const carritoDoc = doc(db, 'historialVentas', carritoId);
+        const carritoDoc = doc(db, "historialVentas", carritoId);
         const carritoSnapshot = await getDoc(carritoDoc);
         if (carritoSnapshot.exists()) {
           const data = carritoSnapshot.data();
           setCarrito({
             ...data,
-            productos: data.carrito || []  
+            productos: data.carrito || [],
           });
         } else {
           setError("El carrito no existe");
@@ -35,20 +35,20 @@ const DetallesCarrito = ({ route }) => {
 
   const formatDate = (dateString) => {
     const options = {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
     };
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', options);
+    return date.toLocaleDateString("es-ES", options);
   };
 
   const formatId = (idString) => {
-    return idString.match(/.{1,4}/g).join('-');
+    return idString.match(/.{1,4}/g).join("-");
   };
 
   if (loading) {
@@ -94,7 +94,9 @@ const DetallesCarrito = ({ route }) => {
                 <View style={styles.tableRow} key={index}>
                   <Text style={styles.tableCell}>{producto.idProducto}</Text>
                   <Text style={styles.tableCell}>{producto.cantidad}</Text>
-                  <Text style={styles.tableCell}>{producto.nombreProducto}</Text>
+                  <Text style={styles.tableCell}>
+                    {producto.nombreProducto}
+                  </Text>
                 </View>
               ))}
             </View>
@@ -113,11 +115,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   productContainer: {
@@ -125,29 +127,31 @@ const styles = StyleSheet.create({
   },
   productTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   table: {
-    width: '100%',
+    width: "100%",
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
   },
   tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
+    flexDirection: "row",
+    backgroundColor: "#f0f0f0",
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
   tableRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
   tableCell: {
+    borderWidth: 0.5,
     flex: 1,
+    textAlign: "justify",
   },
 });
 

@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
-  Alert
+  Alert,
 } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../DB/firebase";
@@ -27,13 +27,13 @@ const Login = () => {
 
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-    })
-    .catch(error => {
-      console.log(error);
-      Alert.alert('Correo o Contraseña incorrectos');
-    });
+      .then((userCredential) => {
+        const user = userCredential.user;
+      })
+      .catch((error) => {
+        console.log(error);
+        Alert.alert("Correo o Contraseña incorrectos");
+      });
   };
 
   useEffect(() => {
@@ -45,10 +45,6 @@ const Login = () => {
     return unsubscribe;
   }, []);
 
-
-
-
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -58,21 +54,18 @@ const Login = () => {
         contentContainerStyle={LoginStyles.scrollViewContainer}
         keyboardShouldPersistTaps="handled"
       >
-
-
         <View style={LoginStyles.centeredContainer}>
-
-
-
-        <View style={LoginStyles.headerContainer}>
-          <Text style={LoginStyles.title}>Panda<Text style={LoginStyles.Subtitle}>Buy</Text></Text>
-          <Image source={require("../images/panda_sin.png")} style={LoginStyles.logoImage}/>
-        </View>
-
-
+          <View style={LoginStyles.headerContainer}>
+            <Text style={LoginStyles.title}>
+              Panda<Text style={LoginStyles.Subtitle}>Buy</Text>
+            </Text>
+            <Image
+              source={require("../images/panda_sin.png")}
+              style={LoginStyles.logoImage}
+            />
+          </View>
 
           <Text style={LoginStyles.headerText}>Iniciar Sesión</Text>
-
 
           <View style={LoginStyles.inputContainer}>
             <View style={LoginStyles.inputWrapper}>
@@ -87,7 +80,8 @@ const Login = () => {
                 style={[
                   LoginStyles.input,
                   {
-                    borderBottomColor: emailFocused || email.length > 0 ? "#1C2120" : "#1C2120",
+                    borderBottomColor:
+                      emailFocused || email.length > 0 ? "#1C2120" : "#1C2120",
                   },
                 ]}
                 placeholderTextColor="#A0A0A0"
@@ -103,7 +97,10 @@ const Login = () => {
                     {
                       top: emailFocused || email.length > 0 ? -20 : 8,
                       left: 40,
-                      color: emailFocused || email.length > 0 ? "#A0A0A0" : "#1C2120",
+                      color:
+                        emailFocused || email.length > 0
+                          ? "#A0A0A0"
+                          : "#1C2120",
                     },
                   ]}
                 >
@@ -112,13 +109,21 @@ const Login = () => {
               </View>
             </View>
             <View style={LoginStyles.inputWrapper}>
-              <Icon name="lock" size={20} color="#A0A0A0" style={LoginStyles.icon} />
+              <Icon
+                name="lock"
+                size={20}
+                color="#A0A0A0"
+                style={LoginStyles.icon}
+              />
               <TextInput
                 placeholder=""
                 style={[
                   LoginStyles.input,
                   {
-                    borderBottomColor: passwordFocused || password.length > 0 ? "#A0A0A0" : "#1C2120",
+                    borderBottomColor:
+                      passwordFocused || password.length > 0
+                        ? "#A0A0A0"
+                        : "#1C2120",
                   },
                 ]}
                 secureTextEntry={!showPassword}
@@ -146,17 +151,18 @@ const Login = () => {
                     {
                       top: passwordFocused || password.length > 0 ? -20 : 8,
                       left: 40,
-                      color: passwordFocused || password.length > 0 ? "#A0A0A0" : "#1C2120",},
+                      color:
+                        passwordFocused || password.length > 0
+                          ? "#A0A0A0"
+                          : "#1C2120",
+                    },
                   ]}
                 >
                   Contraseña
                 </Text>
               </View>
-
             </View>
           </View>
-
-
 
           {errorMessage !== "" && (
             <Text style={LoginStyles.errorText}>{errorMessage}</Text>
@@ -171,28 +177,32 @@ const Login = () => {
             style={LoginStyles.buttonText}
             onPress={() => navigation.navigate("ForgotPassword")}
           >
-            <Text style={LoginStyles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
+            <Text style={LoginStyles.forgotPasswordText}>
+              ¿Olvidaste tu contraseña?
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={LoginStyles.buttonText}
             onPress={() => navigation.navigate("CreateAccount")}
           >
-            <Text style={LoginStyles.forgotPasswordText}>¿Aun no tienes tu Cuenta?</Text>
+            <Text style={LoginStyles.forgotPasswordText}>
+              ¿Aun no tienes tu Cuenta?
+            </Text>
           </TouchableOpacity>
         </View>
-
-
-
-
       </ScrollView>
 
-      <View style={[LoginStyles.final, { justifyContent: 'space-between' }]}>
-        <Image source={require("../images/panta_derecha.png")} style={LoginStyles.logoImagefinal}/>
-        <Image source={require("../images/planta_izquierda.png")} style={LoginStyles.logoImagefinal}/>
+      <View style={[LoginStyles.final, { justifyContent: "space-between" }]}>
+        <Image
+          source={require("../images/panta_derecha.png")}
+          style={LoginStyles.logoImagefinal}
+        />
+        <Image
+          source={require("../images/planta_izquierda.png")}
+          style={LoginStyles.logoImagefinal}
+        />
       </View>
-
     </KeyboardAvoidingView>
-    
   );
 };
 
