@@ -1,9 +1,16 @@
 import React, { useState } from "react";
-import { Text, View, Button, StyleSheet, Alert, TextInput, TouchableOpacity, Image } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Alert,
+  TextInput,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../DB/firebase";
-
 
 const CreateAccount = () => {
   const [email, setEmail] = useState("");
@@ -14,23 +21,25 @@ const CreateAccount = () => {
 
   const handleCreateAccount = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-      
-      await setDoc(doc(db, 'users', user.uid), {
+
+      await setDoc(doc(db, "users", user.uid), {
         firstName: firstName,
         lastName: lastName,
         email: email,
         phone: phone,
       });
 
-      Alert.alert('Success', 'Account created successfully');
+      Alert.alert("Success", "Account created successfully");
     } catch (error) {
-      Alert.alert('Error', error.message);
+      Alert.alert("Error", error.message);
     }
   };
-
-
 
   const CustomButton = ({ title, onPress }) => (
     <TouchableOpacity style={styles.button} onPress={onPress}>
@@ -38,13 +47,10 @@ const CreateAccount = () => {
     </TouchableOpacity>
   );
 
-
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Crear Cuenta </Text>
       <Text style={styles.title}>nueva</Text>
-
 
       <Text style={styles.label}>Nombre</Text>
       <TextInput
@@ -88,76 +94,67 @@ const CreateAccount = () => {
       />
       <CustomButton title="Crear Cuenta" onPress={handleCreateAccount} />
 
-
-
-
       <View style={[styles.final]}>
         <Image
           source={require("../images/panta_derecha.png")}
           style={styles.logoImagefinal}
         />
       </View>
-
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
     paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   input: {
     height: 40,
-    width: '80%',
-    borderColor: '#ccc',
+    width: "80%",
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: '#D4D4D4',
+    backgroundColor: "#D4D4D4",
   },
-
   label: {
-    width: '80%',
-    paddingBottom:5,
-    paddingTop:5
+    width: "80%",
+    paddingBottom: 5,
+    paddingTop: 5,
   },
-
-
   crearCuenta: {
-    width: '80%', 
+    width: "80%",
     height: 40,
-    backgroundColor: '#1C2120',
+    backgroundColor: "#1C2120",
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10, 
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
   },
-  
   button: {
-    width: '80%',
+    width: "80%",
     height: 40,
-    backgroundColor: '#1C2120',
+    backgroundColor: "#1C2120",
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 50,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
-
   final: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -169,7 +166,7 @@ const styles = StyleSheet.create({
     marginLeft: "-22%",
     marginRight: "-20%",
     marginTop: "-18%",
-    marginBottom: "-18%", // Ajusta este valor según sea necesario
+    marginBottom: "-18%",
   },
 });
 
