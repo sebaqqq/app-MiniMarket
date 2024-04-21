@@ -10,28 +10,28 @@
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
-    "@react-native-async-storage/async-storage": "^1.21.0",
-    "@react-native-picker/picker": "2.6.1",
+    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-picker/picker": "2.7.5",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
-    "core-js": "^3.36.1",
-    "expo": "~50.0.14",
+    "core-js": "^3.37.0",
+    "expo": "~50.0.17",
     "expo-av": "~13.10.6",
-    "expo-camera": "^14.1.2",
+    "expo-camera": "^14.1.3",
     "expo-image-picker": "^14.7.1",
-    "expo-media-library": "~15.9.1",
+    "expo-media-library": "~15.9.2",
     "expo-status-bar": "~1.11.1",
-    "firebase": "^10.10.0",
+    "firebase": "^10.11.0",
     "react": "^18.2.0",
-    "react-native": "0.73.6",
-    "react-native-gesture-handler": "~2.14.0",
+    "react-native": "0.73.7",
+    "react-native-gesture-handler": "~2.16.0",
     "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-picker-select": "^9.1.3",
-    "react-native-reanimated": "~3.6.2"
+    "react-native-reanimated": "~3.8.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.24.4"
   },
   "private": true
 }
