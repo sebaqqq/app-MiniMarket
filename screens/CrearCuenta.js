@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, Button, StyleSheet, Alert, TextInput } from 'react-native';
+import { Text, View, Button, StyleSheet, Alert, TextInput, TouchableOpacity } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from "../DB/firebase";
@@ -29,41 +29,64 @@ const CreateAccount = () => {
     }
   };
 
+
+
+  const CustomButton = ({ title, onPress }) => (
+    <TouchableOpacity style={styles.button} onPress={onPress}>
+      <Text style={styles.buttonText}>{title}</Text>
+    </TouchableOpacity>
+  );
+
+
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Crear Cuenta</Text>
+      <Text style={styles.title}>Crear Cuenta </Text>
+      <Text style={styles.title}>nueva</Text>
+
+
+      <Text style={styles.label}>Nombre</Text>
       <TextInput
         style={styles.input}
-        placeholder="Nombre"
+        placeholder="Ingrese su Nombre"
         value={firstName}
         onChangeText={setFirstName}
       />
+
+      <Text style={styles.label}>Apellido</Text>
       <TextInput
         style={styles.input}
-        placeholder="Apellido"
+        placeholder="Ingrese su Apellido"
         value={lastName}
         onChangeText={setLastName}
       />
+
+      <Text style={styles.label}>Teléfono</Text>
       <TextInput
         style={styles.input}
-        placeholder="Teléfono"
+        placeholder="opcional"
         value={phone}
         onChangeText={setPhone}
       />
+
+      <Text style={styles.label}>Correo electrónico</Text>
       <TextInput
         style={styles.input}
-        placeholder="Correo electrónico"
+        placeholder="@gmail"
         value={email}
         onChangeText={setEmail}
       />
+
+      <Text style={styles.label}>Contraseña</Text>
       <TextInput
         style={styles.input}
-        placeholder="Contraseña"
+        placeholder="minimo 6 caracteres"
         secureTextEntry={true}
         value={password}
         onChangeText={setPassword}
       />
-      <Button style={styles.button} title="Crear Cuenta" onPress={handleCreateAccount} />
+      <CustomButton title="Crear Cuenta" onPress={handleCreateAccount} />
+
     </View>
   );
 }
@@ -73,7 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
   },
   title: {
@@ -83,27 +106,47 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: '100%',
+    width: '80%',
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 10,
     paddingHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#D4D4D4',
   },
-  button: {
-    width: '100%',
+
+  label: {
+    width: '80%',
+    paddingBottom:5,
+    paddingTop:5
+  },
+
+
+  crearCuenta: {
+    width: '80%', 
     height: 40,
-    backgroundColor: '#007bff',
+    backgroundColor: '#1C2120',
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10, 
+  },
+  
+  button: {
+    width: '80%',
+    height: 40,
+    backgroundColor: '#1C2120',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 50,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
+
 });
 
 export default CreateAccount;

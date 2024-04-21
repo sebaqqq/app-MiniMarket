@@ -119,13 +119,16 @@ const CrearLista = () => {
                 return;
             }
     
+            // Realizas una consulta a la base de datos para obtener el nombre del producto asociado al ID
             const productoRef = doc(db, 'productos', data);
             const productoSnapshot = await getDoc(productoRef);
     
             if (productoSnapshot.exists()) {
                 const producto = productoSnapshot.data();
+                // Obtenemos el nombre del producto del documento
+                const nombreProducto = producto.nombreProducto;
                 if (mostrarAlerta) {
-                    Alert.alert('Producto encontrado', `El producto '${producto.nombreProducto}' ya existe en la base de datos.`);
+                    Alert.alert('Producto encontrado', `El producto '${nombreProducto}' ya existe en la base de datos.`);
                     setMostrarAlerta(false);
                 }
             } else {
@@ -139,7 +142,8 @@ const CrearLista = () => {
             Alert.alert('Error', 'Hubo un error al buscar el producto en la base de datos.');
         }
     };
-
+    
+    
     if (scanning) {
         return (
             <ScrollView style={styles.container}>
@@ -157,6 +161,8 @@ const CrearLista = () => {
                         onBarCodeScanned={handleBarCodeScanned}
                     />
                 </View>
+
+
             </ScrollView>
         );
     }
@@ -175,6 +181,7 @@ const CrearLista = () => {
                 <Text>ID</Text>
                 <Text>ID: {state.idProducto}</Text>
             </View>
+            
             <View style={styles.inputContainer}>
                 <Button title="Escanear código de barras" onPress={startScanning} />
             </View>
