@@ -4,10 +4,10 @@
     "slug": "app-miniMarket",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/montino-sinFondo.png",
+    "icon": "./assets/panda_recuperar.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/Splash.png",
+      "image": "./assets/Splash2.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -33,7 +33,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/montino-sinFondo.png",
+        "foregroundImage": "./assets/panda_sin.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
@@ -44,7 +44,7 @@
       "package": "com.sebaquintana.appminiMarket"
     },
     "web": {
-      "favicon": "./assets/montino-sinFondo.png"
+      "favicon": "./assets/panda_sin.ico"
     },
     "extra": {
       "eas": {
