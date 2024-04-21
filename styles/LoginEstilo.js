@@ -39,6 +39,16 @@ export const LoginStyles = StyleSheet.create({
     marginBottom: 50,
     color: "#1C2120",
   },
+
+
+  headerTextrecuperar: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 50,
+    color: "#1C2120",
+  },
+
+
   inputContainer: {
     width: "80%",
     marginBottom: 20,
@@ -71,6 +81,20 @@ export const LoginStyles = StyleSheet.create({
     color: "#333",
     borderRadius: 10,
   },
+
+  inputRecupear: {
+    width: "80%",
+    backgroundColor: "#D4D4D4",
+    borderBottomWidth: 1,
+    borderBottomColor: "#000",
+    paddingVertical: 8,
+    paddingLeft: 40,
+    marginBottom:20,
+    color: "#333",
+    borderRadius: 10,
+  },
+
+
   errorText: {
     color: "red",
     marginBottom: 10,
