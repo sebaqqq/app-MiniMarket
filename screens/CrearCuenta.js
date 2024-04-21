@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Text, View, Button, StyleSheet, Alert, TextInput, TouchableOpacity } from 'react-native';
+import { Text, View, Button, StyleSheet, Alert, TextInput, TouchableOpacity, Image } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from "../DB/firebase";
+
 
 const CreateAccount = () => {
   const [email, setEmail] = useState("");
@@ -87,6 +88,16 @@ const CreateAccount = () => {
       />
       <CustomButton title="Crear Cuenta" onPress={handleCreateAccount} />
 
+
+
+
+      <View style={[styles.final]}>
+        <Image
+          source={require("../images/panta_derecha.png")}
+          style={styles.logoImagefinal}
+        />
+      </View>
+
     </View>
   );
 }
@@ -136,7 +147,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 40,
     backgroundColor: '#1C2120',
-    borderRadius: 20,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 50,
@@ -147,6 +158,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  final: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    width: "100%",
+  },
+  logoImagefinal: {
+    width: 150,
+    height: 150,
+    marginLeft: "-22%",
+    marginRight: "-20%",
+    marginTop: "-18%",
+    marginBottom: "-18%", // Ajusta este valor según sea necesario
+  },
 });
 
 export default CreateAccount;
