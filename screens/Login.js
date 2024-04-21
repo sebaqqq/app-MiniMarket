@@ -194,11 +194,11 @@ const Login = () => {
 
       <View style={[LoginStyles.final, { justifyContent: "space-between" }]}>
         <Image
-          source={require("../images/panta_derecha.png")}
+          source={require("../images/planta_izquierda.png")}
           style={LoginStyles.logoImagefinal}
         />
         <Image
-          source={require("../images/planta_izquierda.png")}
+          source={require("../images/panta_derecha.png")}
           style={LoginStyles.logoImagefinal}
         />
       </View>

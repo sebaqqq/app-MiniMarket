@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../DB/firebase";
@@ -54,24 +55,40 @@ const CrearCategoria = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text>Ingrese el nombre de la categoría</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre de la categoría"
-        value={categoria}
-        onChangeText={handleChangeCategoria}
-      />
-      <TouchableOpacity onPress={handleGuardarCategoria} style={styles.boton}>
-        <Text style={styles.botonText}>Guardar Categoría</Text>
-      </TouchableOpacity>
-    </View>
+    <>
+      <View style={styles.container}>
+        <Text>Ingrese el nombre de la categoría</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nombre de la categoría"
+          value={categoria}
+          onChangeText={handleChangeCategoria}
+        />
+        <TouchableOpacity onPress={handleGuardarCategoria} style={styles.boton}>
+          <Text style={styles.botonText}>Guardar Categoría</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={[styles.final, { justifyContent: "space-between" }]}>
+        <Image
+          source={require("../images/planta_izquierda.png")}
+          style={styles.logoImagefinal}
+        />
+        <Image
+          source={require("../images/panta_derecha.png")}
+          style={styles.logoImagefinal}
+        />
+      </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    paddingHorizontal: 20,
   },
   input: {
     width: "100%",
@@ -82,17 +99,31 @@ const styles = StyleSheet.create({
     paddingLeft: 40,
     color: "#333",
     borderRadius: 10,
+    marginBottom: 20,
   },
   boton: {
     backgroundColor: "#1C2120",
     padding: 10,
     borderRadius: 8,
-    width: "85%",
+    width: "100%",
     alignItems: "center",
   },
   botonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  final: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    width: "100%",
+  },
+  logoImagefinal: {
+    width: 150,
+    height: 150,
+    marginLeft: "-22%",
+    marginRight: "-20%",
+    marginTop: "-20%",
+    marginBottom: "-5%",
   },
 });
 

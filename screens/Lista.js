@@ -147,7 +147,7 @@ const Lista = () => {
     <View style={styles.container}>
       <View style={styles.filtrosContainer}>
         <View style={styles.filtroIcono}>
-          <Icon name="search" size={20} color="#555" />
+          <Icon name="search" size={20} color="#1C2120" />
         </View>
         <TextInput
           style={styles.filtroInput}
@@ -181,9 +181,11 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   textoContainer: {
     flex: 1,
+    paddingRight: 10,
   },
   nombre: {
     fontSize: 16,
@@ -227,7 +229,7 @@ const styles = StyleSheet.create({
   },
   botonesContainer: {
     flexDirection: "row",
-    marginVertical: 8,
+    alignItems: "center",
   },
   botonActualizar: {
     backgroundColor: "#28a745",
