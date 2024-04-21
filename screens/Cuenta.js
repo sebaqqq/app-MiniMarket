@@ -71,7 +71,7 @@ function Perfil() {
         <View style={CuentaStyles.profile}>
           <Text style={CuentaStyles.subtitle}>Credencial de Usuario</Text>
           <Image
-            source={require("../images/montinoLogo-sinFondo.png")}
+            source={require("../images/panda_recuperar.png")}
             style={CuentaStyles.logoImage}
           />
           {renderProfileInfo("user", `${user.firstName} ${user.lastName}`)}
