@@ -7,7 +7,7 @@
     "icon": "./assets/montino-sinFondo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/montino-sinFondo.png",
+      "image": "./assets/Splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
