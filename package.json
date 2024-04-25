@@ -11,6 +11,10 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@react-native-async-storage/async-storage": "^1.21.0",
+<<<<<<< Updated upstream
+=======
+    "@react-native-community/datetimepicker": "^7.6.1",
+>>>>>>> Stashed changes
     "@react-native-picker/picker": "^2.6.1",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
