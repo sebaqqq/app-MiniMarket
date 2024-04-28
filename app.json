@@ -21,7 +21,9 @@
         }
       ]
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -46,8 +48,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "533170ce-c90d-49d8-91c8-a164f2826678"
+        "projectId": "84bf5668-d259-4736-801e-9584433f609a"
       }
-    }
+    },
+    "owner": "gonza96472"
   }
 }

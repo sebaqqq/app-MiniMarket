@@ -5,24 +5,21 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  RefreshControl,
 } from "react-native";
 import { db } from "../DB/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const Historial = () => {
   const navigation = useNavigation();
   const [historialCompleto, setHistorialCompleto] = useState([]);
   const [historialFiltrado, setHistorialFiltrado] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [totalPorFecha, setTotalPorFecha] = useState({});
   const [totalPorMes, setTotalPorMes] = useState({});
   const [refreshing, setRefreshing] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false); // Nuevo estado para controlar la visibilidad del selector de fecha
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Nuevo estado para almacenar la fecha seleccionada
 
   useEffect(() => {
     const fetchHistorial = async () => {
@@ -39,22 +36,13 @@ const Historial = () => {
           };
         });
         setHistorialCompleto(historialData);
-        setLoading(false);
         calcularTotalPorFecha(historialData);
         calcularTotalPorMes(historialData);
       } catch (error) {
         console.error("Error fetching historial:", error);
-        setError(error);
-        setLoading(false);
       }
     };
     fetchHistorial();
-
-    const reiniciarTotales = setInterval(() => {
-      setTotalPorFecha({});
-    }, 24 * 60 * 60 * 1000);
-
-    return () => clearInterval(reiniciarTotales);
   }, []);
 
   useEffect(() => {
@@ -71,8 +59,6 @@ const Historial = () => {
       }
     });
     setTotalPorFecha(totalPorFecha);
-
-    calcularTotalPorMes(historialData);
   };
 
   const calcularTotalPorMes = (historialData) => {
@@ -121,54 +107,47 @@ const Historial = () => {
     });
   };
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    try {
-      const historialCollection = collection(db, "historialVentas");
-      const historialSnapshot = await getDocs(historialCollection);
-      const historialData = historialSnapshot.docs.map((doc) => {
-        const data = doc.data();
-        const totalCompra = parseFloat(data.totalCompra);
-        return {
-          id: doc.id,
-          ...data,
-          totalCompra: isNaN(totalCompra) ? 0 : totalCompra,
-        };
-      });
-      setHistorialCompleto(historialData);
-      setLoading(false);
-      calcularTotalPorFecha(historialData);
-      calcularTotalPorMes(historialData);
-    } catch (error) {
-      console.error("Error fetching historial:", error);
-      setError(error);
-      setLoading(false);
-    } finally {
-      setRefreshing(false);
+  const handleDateSelected = (event, selectedDate) => {
+    setShowDatePicker(false); // Oculta el selector de fecha
+    if (selectedDate) {
+      setSelectedDate(selectedDate); // Actualiza la fecha seleccionada
     }
   };
-
-  const handleDateSelected = (date) => {
-    setSelectedDate(date);
-    setShowDatePicker(false);
+  
+  const showDatePickerModal = () => {
+    setShowDatePicker(true); // Muestra el selector de fecha
   };
+  
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        onPress={() => setShowDatePicker(true)}
+        onPress={showDatePickerModal}
         style={styles.boton}
       >
-        <Text style={styles.botonText}>Selecionar Fecha</Text>
+        <Text style={styles.botonText}>Seleccionar Fecha</Text>
       </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="date"
+          display="default"
+          onChange={handleDateSelected}
+        />
+      )}
+      
       <FlatList
         data={historialFiltrado}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        renderItem={({ item }) => (
+          <View style={styles.itemContainer}>
+            <Text>Vendedor: {item.usuario?.firstName}</Text>
+            <Text>Fecha Compra: {formatFecha(item.fecha)}</Text>
+            <Text>Total Compra: {item.totalCompra}</Text>
+          </View>
+        )}
+        keyExtractor={(item) => item.id.toString()}
       />
+
       <View style={styles.totalContainer}>
         <Text style={styles.totalText}>Total por Día:</Text>
         {Object.keys(totalPorFecha).map((fecha) => (
@@ -185,15 +164,10 @@ const Historial = () => {
           </Text>
         ))}
       </View>
-      <DateTimePickerModal
-        isVisible={showDatePicker}
-        mode="date"
-        date={selectedDate}
-        onConfirm={handleDateSelected}
-        onCancel={() => setShowDatePicker(false)}
-      />
+
     </View>
   );
+  
 };
 
 const styles = StyleSheet.create({
